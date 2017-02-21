@@ -40,17 +40,11 @@ def callback_way(way):
     if cnt_way % cnt_ == 0:
        print "Ways: " + str(cnt_way)
 
-#   cur.execute(
-#      'insert into way(id) values (?)',
-#      (way.WayID, ))
-
-
     order_ = 0
     for nd in way.Nds:
 
         cur.execute(
-#         'insert into node_in_way ' +
-          'insert into nod_way ' +
+          'insert into nod_way '    +
           '(way_id, nod_id, order_)'+
           'values (?, ?, ?)',
           (way.WayID, nd, order_))
@@ -72,10 +66,6 @@ def callback_relation(relation):
     if cnt_relation % cnt_ == 0:
        print "Relations: " + str(cnt_relation)
 
-#   cur.execute(
-#     'insert into relation(id) values (?)',
-#     (relation.RelID, ))
-
     for m in relation.Members:
 
         if    m.type == 'node':
@@ -89,7 +79,7 @@ def callback_relation(relation):
                 )
                 values (?, ?, ?) """,
                 
-                (relation.RelID, m.ref, m.role))
+                (m.ref, relation.RelID, m.role))
 
         elif  m.type == 'way':
 
@@ -102,7 +92,7 @@ def callback_relation(relation):
                 )
                 values (?, ?, ?) """,
               
-              (relation.RelID, m.ref, m.role))
+              (m.ref, relation.RelID, m.role))
 
         elif  m.type == 'relation': 
 
@@ -114,7 +104,7 @@ def callback_relation(relation):
                    rol
                  )
                  values (?, ?, ?)""",
-              (relation.RelID, m.ref, m.role))
+              (m.ref, relation.RelID, m.role))
 
         else: print "unexpected type: " + m.type
 
@@ -138,79 +128,18 @@ def create_schema():
           lat real not null,
           lon real not null
         )""")
-      
-
-#   cur.execute("""
-#   
-#       create table way(
-#         id integer primary key
-#       )""")
-
-
-#   cur.execute("""
-#
-#       create table relation(
-#         id integer primary key
-#       )""")
-
-
-#   cur.execute("""
-#   
-#       create table node_in_way (
-#         way_id  integer not null 
-#            --   references way
-#            --   deferrable initially deferred,
-#         node_id integer not null
-#            --   references node
-#            --   deferrable initially deferred,
-#         order_  integer not null
-#       )""")
 
     cur.execute("""
         create table nod_way (
-          way_id  integer not null,
-             --   references way
-             --   deferrable initially deferred,
-          nod_id  integer not null,
-             --   references node
-             --   deferrable initially deferred,
-          order_  integer not null
+          way_id         integer not null,
+          nod_id         integer not null,
+          order_         integer not null
         )""")
-
-
-#   cur.execute("""
-#   
-#       create table member_in_relation(
-#         id_of_relation integer not null
-#                        references relation
-#                        deferrable initially deferred,
-#         node_id        integer null 
-#                        references node
-#                        deferrable initially deferred,
-#         way_id         integer null
-#                        references way
-#                        deferrable initially deferred,
-#         relation_id    integer null 
-#                        references relation
-#                        deferrable initially deferred,
-#         role           text
-#       )""")
-
 
     cur.execute("""
         create table nod_rel (
           nod_id         integer not null,
-                 --      references relation
-                 --      deferrable initially deferred,
           rel_of         integer null,
-                 --      references node
-                 --      deferrable initially deferred,
---        way_id         integer null
---                       references way
---                       deferrable initially deferred,
---        relation_id    integer null 
---                       references relation
---                       deferrable initially deferred,
           rol            text
         )""")
 
@@ -218,34 +147,14 @@ def create_schema():
     cur.execute("""
         create table way_rel (
           way_id         integer not null,
-                 --      references relation
-                 --      deferrable initially deferred,
           rel_of         integer null,
-                 --      references node
-                 --      deferrable initially deferred,
---        way_id         integer null
---                       references way
---                       deferrable initially deferred,
---        relation_id    integer null 
---                       references relation
---                       deferrable initially deferred,
           rol            text
         )""")
 
     cur.execute("""
         create table rel_rel (
           rel_id         integer not null,
-                 --      references relation
-                 --      deferrable initially deferred,
           rel_of         integer null,
-                 --      references node
-                 --      deferrable initially deferred,
---        way_id         integer null
---                       references way
---                       deferrable initially deferred,
---        relation_id    integer null 
---                       references relation
---                       deferrable initially deferred,
           rol            text
         )""")
 
@@ -254,14 +163,8 @@ def create_schema():
     
         create table tag(
           nod_id      integer null,
---                    references node
---                    deferrable initially deferred,
           way_id      integer null,
---                    references way
---                    deferrable initially deferred,
           rel_id      integer null,
---                    references relation
---                    deferrable initially deferred,
           key         text not null,
           val         text not null
         )""")
@@ -319,16 +222,14 @@ print "commited, took {:d} seconds".format(int (time.time() -t_))
 # execute_sql('create index nod_way_ix_way_id  on nod_ay (way_id)')
 # 
 # execute_sql('create index nod_way_ix_nod_id on nod_way (nod_id)')
-# 
-# execute_sql('create index tag_ix_val        on tag      (val)'  )
-# 
-# execute_sql('create index tag_ix_key_val    on tag (key, val)'  )
-# 
-# execute_sql('create index tag_ix_nod_id     on tag (nod_id)'    )
-# 
-# execute_sql('create index tag_ix_way_id     on tag (way_id)'    )
-# 
-# execute_sql('create index tag_ix_rel_id     on tag (rel_id)'    )
+
+execute_sql('create index tag_ix_val        on tag (     val)'  )
+execute_sql('create index tag_ix_key_val    on tag (key, val)'  )
+
+execute_sql('create index tag_ix_nod_id     on tag (nod_id)'    )
+execute_sql('create index tag_ix_way_id     on tag (way_id)'    )
+execute_sql('create index tag_ix_rel_id     on tag (rel_id)'    )
+
 # 
 # execute_sql('create index nod_rel_ix_nod_id on nod_rel(nod_id)' )
 # 
