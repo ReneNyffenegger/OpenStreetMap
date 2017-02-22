@@ -23,7 +23,7 @@ where
 .print -----------------
 .print
 
-.width 10 10 10 10 40 50
+.width 12 12 10 10 40 50
 select
   n.lat,
   n.lon,
@@ -41,24 +41,37 @@ where
 order by
   n.id;
 
---  .print
---  .print Tags of relation
---  .print ----------------
---  .print
---  
---  .width 40 50
---  select
---    key, val
---  from
---    tag
---  where
---    nod_id = 240025182 and
---    key    not like 'name:%'  -- exclude all the translations
---  order by
---    key;
 
+.print
+.print Ways of relation
+.print -----------------
+.print
 
--- select * from way_rel where rel_of = 1682248;
--- 
--- select * from rel_rel where rel_of = 1682248;
--- select * from rel_rel where rel_id = 1682248;
+.width 10 10 40 50
+select
+--n.lat,
+--n.lon,
+  r.way_id,
+  r.rol,
+  t.key,
+  t.val
+from
+  way_rel r                        join
+--way     w on r.way_id = w.id     join
+  tag     t on r.way_id = t.way_id
+where
+  r.rel_of = 1682248
+--t.key not like 'name:%' -- exclude all translations
+order by
+  r.way_id,
+  t.key;
+
+.print
+.print Relations of relation (none expected!)
+.print --------------------------------------
+.print
+
+select * from rel_rel r
+where
+  r.rel_of = 1682248;
+
