@@ -223,12 +223,14 @@ print "commited, took {:d} seconds".format(int (time.time() -t_))
 # 
 # execute_sql('create index nod_way_ix_nod_id on nod_way (nod_id)')
 
-execute_sql('create index tag_ix_val        on tag (     val)'  )
-execute_sql('create index tag_ix_key_val    on tag (key, val)'  )
+execute_sql('create index nod_way_ix_way_id on nod_way (way_id)'   )
 
-execute_sql('create index tag_ix_nod_id     on tag (nod_id)'    )
-execute_sql('create index tag_ix_way_id     on tag (way_id)'    )
-execute_sql('create index tag_ix_rel_id     on tag (rel_id)'    )
+execute_sql('create index tag_ix_val        on tag     (     val)' )
+execute_sql('create index tag_ix_key_val    on tag     (key, val)' )
+
+execute_sql('create index tag_ix_nod_id     on tag     (nod_id)'   )
+execute_sql('create index tag_ix_way_id     on tag     (way_id)'   )
+execute_sql('create index tag_ix_rel_id     on tag     (rel_id)'   )
 
 # 
 # execute_sql('create index nod_rel_ix_nod_id on nod_rel(nod_id)' )
@@ -236,3 +238,5 @@ execute_sql('create index tag_ix_rel_id     on tag (rel_id)'    )
 # execute_sql('create index way_rel_ix_nod_id on way_rel(way_id)' )
 # 
 # execute_sql('create index rel_rel_ex_rel_id on rel_rel(rel_id)' )
+
+execute_sql('analyze' )
