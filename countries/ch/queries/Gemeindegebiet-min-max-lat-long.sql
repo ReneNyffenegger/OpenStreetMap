@@ -1,19 +1,7 @@
-select
-  count(*)
-from
-  tag
-where
-  key = 'swisstopo:OBJEKTART' and
-  val = 'Gemeindegebiet'      and
-  rel_id is not null
-;
-
-
 .header on
 .mode   column
 .width  12 12 12 12 5 30
 
--- explain query plan
 with geb as (
   select
     rel_id
@@ -22,7 +10,6 @@ with geb as (
   where
     key = 'swisstopo:OBJEKTART' and
     val = 'Gemeindegebiet'
---  rel_id is not null
 )
 select
   min(nod.lat),
