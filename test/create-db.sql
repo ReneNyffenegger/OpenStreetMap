@@ -99,6 +99,8 @@ insert into nod values ( 82, 47.7, 7.1);
 
 insert into nod values ( 90, 47.4, 7.1);
 
+insert into nod values (100, 47.5, 6.1);
+
 
  -- }
  -- { nod_way
@@ -157,18 +159,52 @@ insert into nod_way values (  9, 60, 2);
  -- }
  -- { nod_rel
 
-insert into nod_rel values (50, 19, null);
+insert into nod_rel values ( 50, 19, null);
+
+insert into nod_rel values (100, 99, null);
 
  -- }
  -- { way_rel
 
- insert into way_rel values (6, 19, 'Rel 19: South');
- insert into way_rel values (7, 19, 'Rel 19: East' );
- insert into way_rel values (8, 19, 'Rel 19: North');
- insert into way_rel values (9, 19, 'Rel 19: West' );
+ insert into way_rel values ( 6, 19, 'Rel 19: South');
+ insert into way_rel values ( 7, 19, 'Rel 19: East' );
+ insert into way_rel values ( 8, 19, 'Rel 19: North');
+ insert into way_rel values ( 9, 19, 'Rel 19: West' );
+
+ insert into way_rel values ( 1, 99,  null          );
 
  -- }
  -- { rel_rel
+
+ -- }
+ -- { tag
+
+insert into tag values (    4, null, null, 'key-4-1'         , 'val-4-1'       );
+insert into tag values (    4, null, null, 'key-4-2'         , 'val-4-2'       );
+insert into tag values (   22, null, null, 'key-22-1'        , 'val-22-1'      );
+insert into tag values (   22, null, null, 'key-22-2'        , 'val-22-2'      );
+insert into tag values (   40, null, null, 'key-40-1'        , 'val-40-1'      );
+insert into tag values (   40, null, null, 'key-40-2'        , 'val-40-2'      );
+insert into tag values (   42, null, null, 'key-42-1'        , 'val-42-1'      );
+insert into tag values (   42, null, null, 'key-42-2'        , 'val-42-2'      );
+insert into tag values (   50, null, null, 'label'           , 'Relation 19'   );
+
+
+insert into tag values ( null,    1, null, 'key-way-1'       , 'val-way-1'     );
+
+insert into tag values ( null,    2, null, 'building'        , 'yes'           );
+insert into tag values ( null,    2, null, 'addr:street'     , 'Foostr'        );
+insert into tag values ( null,    2, null, 'addr:housenumber', '42'            );
+insert into tag values ( null,    2, null, 'addr:postcode'   , '9999'          );
+insert into tag values ( null,    2, null, 'addr:city'       , 'Dorfikon'      );
+
+insert into tag values ( null,    3, null, 'building'        , 'house'         );
+
+
+insert into tag values ( null, null,   19, 'name'            , 'Relation 19'   );
+insert into tag values ( null, null,   19, 'key-rel-19'      , 'val-rel-19'    );
+
+insert into tag values ( null, null,   99, 'key-rel-99'      , 'val-rel-99'    );
 
  -- }
 
