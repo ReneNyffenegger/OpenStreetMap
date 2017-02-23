@@ -5,6 +5,7 @@ use Time::HiRes qw(time);
 
 use DBI;
 
+my $db         = shift or die;
 my $area_name  = shift or die;
 my $lat_min    = shift or die;
 my $lat_max    = shift or die;
@@ -12,9 +13,8 @@ my $lon_min    = shift or die;
 my $lon_max    = shift or die;
 
 
-# unlink "../db/${area_name}.db" if -e "../db/${area_name}.db";
+unlink "../db/${area_name}.db" if -e "../db/${area_name}.db";
 
-my $db     = '../db/ch.db';
 die unless -e $db;
 my $dbh = DBI->connect("dbi:SQLite:dbname=$db") or die "$db does not exist";
 

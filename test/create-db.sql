@@ -52,6 +52,7 @@ CREATE INDEX tag_ix_nod_id     on tag     (nod_id);
 CREATE INDEX tag_ix_way_id     on tag     (way_id);
 CREATE INDEX tag_ix_rel_id     on tag     (rel_id);
 
+ -- { nod
 insert into nod values (  1, 47.9, 6.1);
 insert into nod values (  2, 47.9, 6.2);
 insert into nod values (  3, 47.8, 6.3);
@@ -83,8 +84,24 @@ insert into nod values ( 41, 47.4, 8.9);
 insert into nod values ( 42, 47.4, 9.1);
 insert into nod values ( 43, 47.5, 9.2);
 
---------------------------------------
+insert into nod values ( 50, 47.7, 7.6);
 
+insert into nod values ( 60, 47.2, 7.2);
+insert into nod values ( 61, 47.1, 7.7);
+insert into nod values ( 62, 47.1, 7.7);
+
+insert into nod values ( 70, 47.3, 7.9);
+insert into nod values ( 71, 47.8, 7.8);
+
+insert into nod values ( 80, 47.9, 7.4);
+insert into nod values ( 81, 47.8, 7.2);
+insert into nod values ( 82, 47.7, 7.1);
+
+insert into nod values ( 90, 47.4, 7.1);
+
+
+ -- }
+ -- { nod_way
 insert into nod_way values (  1,  1, 0);
 insert into nod_way values (  1,  2, 1);
 insert into nod_way values (  1,  3, 2);
@@ -120,5 +137,39 @@ insert into nod_way values (  5, 41, 1);
 insert into nod_way values (  5, 42, 2);
 insert into nod_way values (  5, 43, 3);
 
+insert into nod_way values (  6, 62, 0);
+insert into nod_way values (  6, 61, 1);
+insert into nod_way values (  6, 60, 2);
+
+insert into nod_way values (  7, 62, 0);
+insert into nod_way values (  7, 70, 1);
+insert into nod_way values (  7, 71, 2);
+insert into nod_way values (  7, 80, 3);
+
+insert into nod_way values (  8, 80, 0);
+insert into nod_way values (  8, 81, 1);
+insert into nod_way values (  8, 82, 2);
+
+insert into nod_way values (  9, 82, 0);
+insert into nod_way values (  9, 90, 1);
+insert into nod_way values (  9, 60, 2);
+
+ -- }
+ -- { nod_rel
+
+insert into nod_rel values (50, 19, null);
+
+ -- }
+ -- { way_rel
+
+ insert into way_rel values (6, 19, 'Rel 19: South');
+ insert into way_rel values (7, 19, 'Rel 19: East' );
+ insert into way_rel values (8, 19, 'Rel 19: North');
+ insert into way_rel values (9, 19, 'Rel 19: West' );
+
+ -- }
+ -- { rel_rel
+
+ -- }
 
 commit;
