@@ -83,4 +83,42 @@ insert into nod values ( 41, 47.4, 8.9);
 insert into nod values ( 42, 47.4, 9.1);
 insert into nod values ( 43, 47.5, 9.2);
 
+--------------------------------------
+
+insert into nod_way values (  1,  1, 0);
+insert into nod_way values (  1,  2, 1);
+insert into nod_way values (  1,  3, 2);
+insert into nod_way values (  1,  4, 3);
+insert into nod_way values (  1,  5, 4);
+insert into nod_way values (  1,  6, 5);
+insert into nod_way values (  1,  1, 6);
+
+insert into nod_way values (  2, 10, 0);
+insert into nod_way values (  2, 11, 1);
+insert into nod_way values (  2, 12, 2);
+insert into nod_way values (  2, 13, 3);
+insert into nod_way values (  2, 10, 4);
+
+insert into nod_way values (  3, 20, 0);
+insert into nod_way values (  3, 21, 1);
+insert into nod_way values (  3, 22, 2);
+insert into nod_way values (  3, 23, 3);
+insert into nod_way values (  3, 20, 4);
+
+insert into nod_way values (  4, 30, 0);
+insert into nod_way values (  4, 31, 1);
+insert into nod_way values (  4, 32, 2);
+insert into nod_way values (  4, 33, 3);
+insert into nod_way values (  4, 34, 4);
+insert into nod_way values (  4, 35, 5);
+insert into nod_way values (  4, 36, 6);
+insert into nod_way values (  4, 37, 7);
+insert into nod_way values (  4, 30, 8);
+
+insert into nod_way values (  5, 40, 0);
+insert into nod_way values (  5, 41, 1);
+insert into nod_way values (  5, 42, 2);
+insert into nod_way values (  5, 43, 3);
+
+
 commit;
