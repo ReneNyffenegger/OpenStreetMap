@@ -64,6 +64,11 @@ insert into nod values ( 11, 47.6, 7.4);
 insert into nod values ( 12, 47.5, 7.4);
 insert into nod values ( 13, 47.5, 7.3);
 
+insert into nod values ( 20, 47.5, 7.6);
+insert into nod values ( 21, 47.4, 7.6);
+insert into nod values ( 22, 47.4, 7.7);
+insert into nod values ( 23, 47.5, 7.7);
+
 insert into nod values ( 30, 47.8, 8.3);
 insert into nod values ( 31, 47.8, 8.4);
 insert into nod values ( 32, 47.7, 8.5);
