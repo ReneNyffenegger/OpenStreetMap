@@ -182,8 +182,8 @@ sub fill_area_tag_table { #_{
     insert into area_db.tag
     select * from tag
     where 
-       rel_id in (select distinct rel_id from area_db.nod_rel union
-                  select distinct rel_id from area_db.way_rel)
+       rel_id in (select distinct rel_of from area_db.nod_rel union
+                  select distinct rel_of from area_db.way_rel)
 
    ");
 
