@@ -1,0 +1,20 @@
+Remove records with unnecessary keys in table tag:
+  o  source
+  o  image
+
+Create a table building.
+  Attributes:
+    building-type
+    street
+    house_number
+    ? zip_code
+    ? city
+  (see queries/addresses.sql)
+
+Interessante tags:
+  note
+
+Uninteressante tags:
+  source
+  openGeoDB:%
+
