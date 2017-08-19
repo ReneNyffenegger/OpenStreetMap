@@ -12,7 +12,14 @@ Create a table building.
   (see queries/addresses.sql)
 
 Interessante tags:
-  note
+  key=note
+
+  key=network          val=ZVV
+  key=public_transport val=stop_area
+  key=railway          val=station
+  key=operator         val=SBW
+
+  key=ele
 
 Uninteressante tags:
   source
