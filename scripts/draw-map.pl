@@ -10,8 +10,8 @@ die unless -e $db;
 my $dbh = DBI->connect("dbi:SQLite:dbname=$db") or die "$db does not exist";
 
 
-my ($lat_min, $lat_max, $lng_min, $lng_max) = (46, 48, 6, 10);
-# my ($lat_min, $lat_max, $lng_min, $lng_max) = ( 47.4974391,    47.5218535,    8.6176417,     8.6611279);
+# my ($lat_min, $lat_max, $lng_min, $lng_max) = (46, 48, 6, 10);
+my ($lat_min, $lat_max, $lng_min, $lng_max) = ( 47.4974391,    47.5218535,    8.6176417,     8.6611279);
 
 
 my ($y_min, $y_max,
