@@ -18,7 +18,7 @@ def callback_node(node):
     global cnt_node
     cnt_node += 1
     if cnt_node % cnt_ == 0:
-       print "Nodes: " + str(cnt_node)
+       print("Nodes: " + str(cnt_node))
 
     cur.execute(
       'insert into nod ' +
@@ -38,7 +38,7 @@ def callback_way(way):
     global cnt_way
     cnt_way += 1
     if cnt_way % cnt_ == 0:
-       print "Ways: " + str(cnt_way)
+       print("Ways: " + str(cnt_way))
 
     order_ = 0
     for nd in way.Nds:
@@ -63,7 +63,7 @@ def callback_relation(relation):
     global cnt_relation
     cnt_relation += 1
     if cnt_relation % cnt_ == 0:
-       print "Relations: " + str(cnt_relation)
+       print("Relations: " + str(cnt_relation))
 
     order_ = 0
     for m in relation.Members:
@@ -137,7 +137,7 @@ def callback_relation(relation):
 #v.1              values (?, ?, ?)""",
 #v.1           (m.ref, relation.RelID, m.role))
 
-        else: print "unexpected type: " + m.type
+        else: print("unexpected type: " + m.type)
 
         order_ += 1
 
@@ -220,13 +220,13 @@ def execute_sql(stmt):
 
     cur.execute(stmt)
     
-    print "{:d} seconds for {:s}".format(
-          int(time.time() - t_), stmt)
+    print("{:d} seconds for {:s}".format(
+          int(time.time() - t_), stmt))
 
 #   -----------------------------------------
 
 if len(sys.argv) != 3:
-   print "pbf2sqlite.py pbf-file sqlite-db-file"
+   print("pbf2sqlite.py pbf-file sqlite-db-file")
    sys.exit(0)
 
 # First argument is *.pbf file name
@@ -256,12 +256,12 @@ OSMpbfParser.go(
   callback_way,
   callback_relation)
 
-print "pbf file loaded, took {:d} seconds".format(int (time.time() -t_))
+print("pbf file loaded, took {:d} seconds".format(int (time.time() -t_)))
 
 
 t_ = time.time()
 db.commit()
-print "commited, took {:d} seconds".format(int (time.time() -t_))
+print("commited, took {:d} seconds".format(int (time.time() -t_)))
 
 # execute_sql('create index nod_way_ix_way_id  on nod_ay (way_id)')
 # 

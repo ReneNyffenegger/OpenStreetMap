@@ -108,7 +108,7 @@ def check_pbf_file_header(pn):
         if rf in ("OsmSchema-V0.6", "DenseNodes"):
             pass
         else:
-            print "not a required feature %s"%(rf)
+            print("not a required feature %s"%(rf))
             return False
 
     return True
@@ -160,7 +160,7 @@ def readNextBlock():
        return False
 
     if pb2_blob_header.type != "OSMData":
-       print "Expected OSMData, found %s"%(pb2_blob_header.type)
+       print("Expected OSMData, found %s"%(pb2_blob_header.type))
        return False
 
     if readBlob()==False:
@@ -171,7 +171,10 @@ def readNextBlock():
 
 def processDense(dense):
     # process a dense node block
+#   Python 2
     NANO=1000000000L
+#   Python 3
+#   NANO=1_000_000_000
     lastID=0
     lastLat=0
     lastLon=0
@@ -216,7 +219,10 @@ def processDense(dense):
         cb_node(node)
 
 def processNodes(nodes):
+#   Python 2
     NANO=1000000000L
+#   Python 3
+#   NANO=1_000_000_000
     gran=float(pb2_primitve_block.granularity)
     latoff=float(pb2_primitve_block.lat_offset)
     lonoff=float(pb2_primitve_block.lon_offset)
@@ -348,7 +354,7 @@ def go(pbf_filename, callback_node, callback_way, callback_relation):
     cb_relation = callback_relation
 
     if  not os.path.exists(pbf_filename) :
-        print "The binary file %s cannot be found" % (pbf_filename)
+        print("The binary file %s cannot be found" % (pbf_filename))
         sys.exit(1)
 
     pbf_file = open(pbf_filename, "rb")
@@ -360,7 +366,7 @@ def go(pbf_filename, callback_node, callback_way, callback_relation):
     pb2_primitve_block=osmformat_pb2.PrimitiveBlock()
 
     if check_pbf_file_header("pbfparser.py 1.3")==False:
-        print "Header trouble"
+        print("Header trouble")
         exit(1)
 
     parse()

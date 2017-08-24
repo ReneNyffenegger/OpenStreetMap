@@ -81,7 +81,10 @@ _BLOBHEADER = descriptor.Descriptor(
     descriptor.FieldDescriptor(
       name='type', full_name='OSMPBF.BlobHeader.type', index=0,
       number=1, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+#     Python 2:
+#     has_default_value=False, default_value=unicode("", "utf-8"),
+#     Python 3:
+      has_default_value=False, default_value="",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),

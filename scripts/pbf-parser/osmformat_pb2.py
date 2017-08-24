@@ -71,14 +71,20 @@ _HEADERBLOCK = descriptor.Descriptor(
     descriptor.FieldDescriptor(
       name='writingprogram', full_name='OSMPBF.HeaderBlock.writingprogram', index=3,
       number=16, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+#     Python 2:
+#     has_default_value=False, default_value=unicode("", "utf-8"),
+#     Python 3:
+      has_default_value=False, default_value="",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
       name='source', full_name='OSMPBF.HeaderBlock.source', index=4,
       number=17, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=unicode("", "utf-8"),
+#     Python 2:
+#     has_default_value=False, default_value=unicode("", "utf-8"),
+#     Python 3:
+      has_default_value=False, default_value="",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
