@@ -153,65 +153,65 @@ def callback_relation(relation):
             ) values (?, ?, ?)""",
             (relation.RelID, k, relation.Tags[k]))
 
-def create_schema():
-    
-    cur.execute("""
-        create table nod (
-          id  integer primary key,
-          lat real not null,
-          lon real not null
-        )""")
-
-    cur.execute("""
-        create table nod_way (
-          way_id         integer not null,
-          nod_id         integer not null,
-          order_         integer not null
-        )""")
-
-    cur.execute("""
-        create table rel_mem (
-          rel_of         integer not null,
-          order_         integer not null,
-          way_id         integer,
-          nod_id         integer,
-          rel_id         integer,
-          rol            text
-       )""")
-
-
-#v.1    cur.execute("""
-#v.1        create table nod_rel (
-#v.1          nod_id         integer not null,
-#v.1          rel_of         integer null,
-#v.1          rol            text
-#v.1        )""")
-#v.1
-#v.1
-#v.1    cur.execute("""
-#v.1        create table way_rel (
-#v.1          way_id         integer not null,
-#v.1          rel_of         integer null,
-#v.1          rol            text
-#v.1        )""")
-#v.1
-#v.1    cur.execute("""
-#v.1        create table rel_rel (
-#v.1          rel_id         integer not null,
-#v.1          rel_of         integer null,
-#v.1          rol            text
-#v.1        )""")
-
-
-    cur.execute("""
-    
-        create table tag(
-          nod_id      integer null,
-          way_id      integer null,
-          rel_id      integer null,
-          key         text not null,
-          val         text not null
-        )""")
+# moved to pm def create_schema():
+# moved to pm     
+# moved to pm     cur.execute("""
+# moved to pm         create table nod (
+# moved to pm           id  integer primary key,
+# moved to pm           lat real not null,
+# moved to pm           lon real not null
+# moved to pm         )""")
+# moved to pm 
+# moved to pm     cur.execute("""
+# moved to pm         create table nod_way (
+# moved to pm           way_id         integer not null,
+# moved to pm           nod_id         integer not null,
+# moved to pm           order_         integer not null
+# moved to pm         )""")
+# moved to pm 
+# moved to pm     cur.execute("""
+# moved to pm         create table rel_mem (
+# moved to pm           rel_of         integer not null,
+# moved to pm           order_         integer not null,
+# moved to pm           way_id         integer,
+# moved to pm           nod_id         integer,
+# moved to pm           rel_id         integer,
+# moved to pm           rol            text
+# moved to pm        )""")
+# moved to pm 
+# moved to pm 
+# moved to pm #v.1    cur.execute("""
+# moved to pm #v.1        create table nod_rel (
+# moved to pm #v.1          nod_id         integer not null,
+# moved to pm #v.1          rel_of         integer null,
+# moved to pm #v.1          rol            text
+# moved to pm #v.1        )""")
+# moved to pm #v.1
+# moved to pm #v.1
+# moved to pm #v.1    cur.execute("""
+# moved to pm #v.1        create table way_rel (
+# moved to pm #v.1          way_id         integer not null,
+# moved to pm #v.1          rel_of         integer null,
+# moved to pm #v.1          rol            text
+# moved to pm #v.1        )""")
+# moved to pm #v.1
+# moved to pm #v.1    cur.execute("""
+# moved to pm #v.1        create table rel_rel (
+# moved to pm #v.1          rel_id         integer not null,
+# moved to pm #v.1          rel_of         integer null,
+# moved to pm #v.1          rol            text
+# moved to pm #v.1        )""")
+# moved to pm 
+# moved to pm 
+# moved to pm     cur.execute("""
+# moved to pm     
+# moved to pm         create table tag(
+# moved to pm           nod_id      integer null,
+# moved to pm           way_id      integer null,
+# moved to pm           rel_id      integer null,
+# moved to pm           key         text not null,
+# moved to pm           val         text not null
+# moved to pm         )""")
 
 
 def execute_sql(stmt):
@@ -235,9 +235,9 @@ pbf_filename = sys.argv[1]
 # second argument is *.db file name
 db_filename  = sys.argv[2]
 
-# delete db if exists
-if os.path.isfile(db_filename):
-   os.remove(db_filename)
+# moved to pm # delete db if exists
+# moved to pm if os.path.isfile(db_filename):
+# moved to pm    os.remove(db_filename)
 
 db  = sqlite3.connect(db_filename)
 db.text_factory = str
@@ -247,7 +247,7 @@ db.text_factory = str
 
 cur = db.cursor()
 
-create_schema()
+# moved to pm create_schema()
 
 t_ = time.time()
 OSMpbfParser.go(
@@ -267,14 +267,17 @@ print("commited, took {:d} seconds".format(int (time.time() -t_)))
 # 
 # execute_sql('create index nod_way_ix_nod_id on nod_way (nod_id)')
 
-execute_sql('create index nod_way_ix_way_id on nod_way (way_id)'   )
-
-execute_sql('create index tag_ix_val        on tag     (     val)' )
-execute_sql('create index tag_ix_key_val    on tag     (key, val)' )
-
-execute_sql('create index tag_ix_nod_id     on tag     (nod_id)'   )
-execute_sql('create index tag_ix_way_id     on tag     (way_id)'   )
-execute_sql('create index tag_ix_rel_id     on tag     (rel_id)'   )
+print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
+print("!!!!! Use pm to create indexes !!!!!")
+print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
+# moved to pm execute_sql('create index nod_way_ix_way_id on nod_way (way_id)'   )
+# moved to pm 
+# moved to pm execute_sql('create index tag_ix_val        on tag     (     val)' )
+# moved to pm execute_sql('create index tag_ix_key_val    on tag     (key, val)' )
+# moved to pm 
+# moved to pm execute_sql('create index tag_ix_nod_id     on tag     (nod_id)'   )
+# moved to pm execute_sql('create index tag_ix_way_id     on tag     (way_id)'   )
+# moved to pm execute_sql('create index tag_ix_rel_id     on tag     (rel_id)'   )
 
 # 
 # execute_sql('create index nod_rel_ix_nod_id on nod_rel(nod_id)' )
