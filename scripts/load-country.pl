@@ -8,7 +8,7 @@ use Geo::OSM::DBI;
 my $country = shift or die;
 my $db_path = "../db/${country}.db";
 
-system ("python3 download-${COUNTRY}-pbf.py");
+system ("python3 download-${country}-pbf.py");
 
 create_base_schema_tables();
 
