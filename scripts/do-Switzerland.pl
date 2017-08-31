@@ -6,7 +6,7 @@ use DBI;
 use Geo::OSM::DBI::CH;
 use File::Compare;
 
-my $dbh = DBI->connect("dbi:SQLite:dbname=../db/ch.db") or die "does not exist";
+my $dbh = DBI->connect("dbi:SQLite:dbname=../db/ch.db", '', '', {sqlite_unicode=>1}) or die "does not exist";
 $dbh->{AutoCommit} = 0;
 
 my $osm_db = Geo::OSM::DBI::CH->new($dbh);
