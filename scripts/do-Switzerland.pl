@@ -15,8 +15,8 @@ municipalities();
 
 
 sub municipalities {
-# $osm_db->create_table_municipalities_ch();
-# $dbh->commit;
+  $osm_db->create_table_municipalities_ch();
+  $dbh->commit;
 
   my %municipalities = $osm_db->municipalities_ch;
 
