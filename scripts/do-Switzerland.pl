@@ -29,10 +29,10 @@ sub municipalities {
       $rel_id,
       $municipalities{$rel_id}{name},
       $municipalities{$rel_id}{bfs_no},
-      $municipalities{$rel_id}{min_lat},
-      $municipalities{$rel_id}{max_lat},
-      $municipalities{$rel_id}{min_lon},
-      $municipalities{$rel_id}{max_lon};
+      $municipalities{$rel_id}{lat_min},
+      $municipalities{$rel_id}{lat_max},
+      $municipalities{$rel_id}{lon_min},
+      $municipalities{$rel_id}{lon_max};
     
   }
   close $gotten;
