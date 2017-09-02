@@ -46,7 +46,7 @@ order by
 limit 10;
 
 .width 30 150
-
+select
   key,
   val
 from
