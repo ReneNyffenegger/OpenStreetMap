@@ -61,7 +61,10 @@ sub municipalities_area_tables { #_{
 
       $dbh->{AutoCommit} = 1; # Why is this necessary?
 #     my $dbh = DBI->connect("dbi:SQLite:dbname=$db_test") or die "Could not create $db_test";
-      $dbh->do("attach database '../db/area/$name.db' as area");
+
+      my $db_name = "../db/area/$name.db";
+      unlink $db_name if -f $db_name;
+      $dbh->do("attach database '$db_name' as area");
       $dbh->{AutoCommit} = 0; # Why is this necessary?
 
       $osm_db->create_area_tables({schema_name_to=>'area', municipality_rel_id=>$rel_id});
