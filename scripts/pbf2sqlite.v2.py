@@ -286,4 +286,4 @@ print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
 # 
 # execute_sql('create index rel_rel_ex_rel_id on rel_rel(rel_id)' )
 
-execute_sql('analyze' )
+# 2017-09-05: moved to pm execute_sql('analyze' )
