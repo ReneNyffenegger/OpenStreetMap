@@ -75,6 +75,8 @@ order by
 
 .print |  
 .print |    Way members of Switzerland-relation
+.print |    Note: inner ways (Campione) seem not to be
+.print |    selected (Compare border-Switzerland.sql)
 .print |  
 
 select
