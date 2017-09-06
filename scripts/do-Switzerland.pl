@@ -101,6 +101,19 @@ sub tests {
   my $rel_id_ch = $osm_db->rel_id_ch;
   printf "rel_id_ch should be 51701 but is %d\n" unless $rel_id_ch->{id} == 51701;
 
-  printf "Name: %s\n", $rel_id_ch->name;
+  my $name_ch = $rel_id_ch->name;
+  printf "Name of rel_id_ch is $name_ch\n" unless $name_ch eq 'Schweiz/Suisse/Svizzera/Svizra';
+
+  my $name_ch_de = $rel_id_ch->name_in_lang('de');
+  printf "Name of rel_id_ch_de is $name_ch_de\n" unless $name_ch_de eq 'Schweiz';
+
+  my $name_ch_fr = $rel_id_ch->name_in_lang('fr');
+  printf "Name of rel_id_ch_fr is $name_ch_fr\n" unless $name_ch_fr eq 'Suisse';
+
+  my $name_ch_it = $rel_id_ch->name_in_lang('it');
+  printf "Name of rel_id_ch_it is $name_ch_it\n" unless $name_ch_it eq 'Svizzera';
+
+  my $name_ch_rm = $rel_id_ch->name_in_lang('rm');
+  printf "Name of rel_id_ch_rm is $name_ch_rm\n" unless $name_ch_rm eq 'Svizra';
  
 }
