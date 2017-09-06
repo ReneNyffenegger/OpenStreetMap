@@ -11,8 +11,10 @@ $dbh->{AutoCommit} = 0;
 
 my $osm_db = Geo::OSM::DBI::CH->new($dbh);
 
-municipalities();
-municipalities_area_tables();
+
+tests();
+# municipalities();
+# municipalities_area_tables();
 
 sub municipalities { #_{
   $osm_db->create_table_municipalities_ch();
@@ -79,3 +81,26 @@ sub municipalities_area_tables { #_{
   }
 
 } #_}
+
+sub tests {
+
+  my @rel_ids_de = $osm_db->rel_ids_ISO_3166_1('DE');
+
+  if (@rel_ids_de == 3) { #_{
+
+     my @rel_ids_de_sorted = sort {$a->{id} <=> $b->{id}} @rel_ids_de;
+     printf "first rel_id_de should be 51477 but is %d\n", $rel_ids_de_sorted[0]->{id}   unless $rel_ids_de_sorted[0]->{id} == 51477;
+     printf "first rel_id_de should be 62781 but is %d\n", $rel_ids_de_sorted[1]->{id}   unless $rel_ids_de_sorted[1]->{id} == 62781;
+     printf "first rel_id_de should be 1111111 but is %d\n", $rel_ids_de_sorted[2]->{id}   unless $rel_ids_de_sorted[2]->{id} == 1111111;
+
+  } #_}
+  else { #_{
+    print "3 rel_ids_de expected\n";
+  } #_}
+
+  my $rel_id_ch = $osm_db->rel_id_ch;
+  printf "rel_id_ch should be 51701 but is %d\n" unless $rel_id_ch->{id} == 51701;
+
+  printf "Name: %s\n", $rel_id_ch->name;
+ 
+}
