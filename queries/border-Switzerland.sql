@@ -2,6 +2,8 @@
 .header on
 .width  4 4 11 11 15 12 12
 
+-- .width 6 6 6
+-- select count(*), count(distinct way_id), count(distinct nod_id) from (
 select
   rm.order_      order_rm,
   nw.order_      order_nd,
@@ -19,4 +21,5 @@ where
 order by
   rm.order_,
   nw.order_
+--)
 ;
