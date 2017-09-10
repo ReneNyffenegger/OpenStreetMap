@@ -1,6 +1,9 @@
 .mode column
 .width 10 50 4 4 4
+.timer on
 
+-- .width 3 3 3 90
+-- explain query plan
 select
    admi.rel_id rel_id,
    name.val    name,
@@ -33,3 +36,5 @@ group by
   cnt_nodes_verification,
   name
   ;
+
+.timer off
