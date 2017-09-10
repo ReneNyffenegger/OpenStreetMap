@@ -12,9 +12,9 @@ $dbh->{AutoCommit} = 0;
 my $osm_db = Geo::OSM::DBI::CH->new($dbh);
 
 
-tests();
 municipalities();
 municipalities_area_tables();
+tests();
 
 sub municipalities { #_{
   $osm_db->create_table_municipalities_ch();
