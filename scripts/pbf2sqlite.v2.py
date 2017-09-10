@@ -267,9 +267,9 @@ print("commited, took {:d} seconds".format(int (time.time() -t_)))
 # 
 # execute_sql('create index nod_way_ix_nod_id on nod_way (nod_id)')
 
-print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
-print("!!!!! Use pm to create indexes !!!!!")
-print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
+# print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
+# print("!!!!! Use pm to create indexes !!!!!")
+# print("!!!!! !!!!!!!!!!!!!!!!!!!!!!!! !!!!!")
 # moved to pm execute_sql('create index nod_way_ix_way_id on nod_way (way_id)'   )
 # moved to pm 
 # moved to pm execute_sql('create index tag_ix_val        on tag     (     val)' )
