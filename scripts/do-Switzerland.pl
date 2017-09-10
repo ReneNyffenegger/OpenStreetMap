@@ -13,8 +13,8 @@ my $osm_db = Geo::OSM::DBI::CH->new($dbh);
 
 
 tests();
-# municipalities();
-# municipalities_area_tables();
+municipalities();
+municipalities_area_tables();
 
 sub municipalities { #_{
   $osm_db->create_table_municipalities_ch();
@@ -85,35 +85,72 @@ sub municipalities_area_tables { #_{
 sub tests {
 
   my @rel_ids_de = $osm_db->rel_ids_ISO_3166_1('DE');
+  if (@rel_ids_de == 3) {
+    print "rel_ids_de[0] = $rel_ids_de[0]\n" unless $rel_ids_de[0] == 51477;
+    print "rel_ids_de[1] = $rel_ids_de[1]\n" unless $rel_ids_de[1] == 62781;
+    print "rel_ids_de[2] = $rel_ids_de[2]\n" unless $rel_ids_de[2] == 1111111;
 
-  if (@rel_ids_de == 3) { #_{
+  }
+  else {
+    print "3 rel_ids de expected\n";
+  }
 
-     my @rel_ids_de_sorted = sort {$a->{id} <=> $b->{id}} @rel_ids_de;
+  my @rels_de = $osm_db->rels_ISO_3166_1('DE');
+
+  if (@rels_de == 3) { #_{
+
+     my @rel_ids_de_sorted = sort {$a->{id} <=> $b->{id}} @rels_de;
      printf "first rel_id_de should be 51477 but is %d\n", $rel_ids_de_sorted[0]->{id}   unless $rel_ids_de_sorted[0]->{id} == 51477;
      printf "first rel_id_de should be 62781 but is %d\n", $rel_ids_de_sorted[1]->{id}   unless $rel_ids_de_sorted[1]->{id} == 62781;
      printf "first rel_id_de should be 1111111 but is %d\n", $rel_ids_de_sorted[2]->{id}   unless $rel_ids_de_sorted[2]->{id} == 1111111;
 
   } #_}
   else { #_{
-    print "3 rel_ids_de expected\n";
+    print "3 rels_de expected\n";
   } #_}
 
-  my $rel_id_ch = $osm_db->rel_id_ch;
-  printf "rel_id_ch should be 51701 but is %d\n" unless $rel_id_ch->{id} == 51701;
+  my $rel_ch = $osm_db->rel_ch;
+  printf "rel_ch should be 51701 but is %d\n" unless $rel_ch->{id} == 51701;
 
-  my $name_ch = $rel_id_ch->name;
-  printf "Name of rel_id_ch is $name_ch\n" unless $name_ch eq 'Schweiz/Suisse/Svizzera/Svizra';
+  my $name_ch = $rel_ch->name;
+  printf "Name of rel_ch is $name_ch\n" unless $name_ch eq 'Schweiz/Suisse/Svizzera/Svizra';
 
-  my $name_ch_de = $rel_id_ch->name_in_lang('de');
+  my $name_ch_de = $rel_ch->name_in_lang('de');
   printf "Name of rel_id_ch_de is $name_ch_de\n" unless $name_ch_de eq 'Schweiz';
 
-  my $name_ch_fr = $rel_id_ch->name_in_lang('fr');
+  my $name_ch_fr = $rel_ch->name_in_lang('fr');
   printf "Name of rel_id_ch_fr is $name_ch_fr\n" unless $name_ch_fr eq 'Suisse';
 
-  my $name_ch_it = $rel_id_ch->name_in_lang('it');
+  my $name_ch_it = $rel_ch->name_in_lang('it');
   printf "Name of rel_id_ch_it is $name_ch_it\n" unless $name_ch_it eq 'Svizzera';
 
-  my $name_ch_rm = $rel_id_ch->name_in_lang('rm');
+  my $name_ch_rm = $rel_ch->name_in_lang('rm');
   printf "Name of rel_id_ch_rm is $name_ch_rm\n" unless $name_ch_rm eq 'Svizra';
+
+# my $rel_ch = $osm_db->rel_ch();
+
+  print "rel_ch->id != 51701\n" unless $rel_ch->{id} == 51701;
+
+  print "$rel_ch is not a Geo::OSM::DBI::Primitive::Relation\n" unless $rel_ch -> isa('Geo::OSM::DBI::Primitive::Relation');
+  print "$rel_ch is not a Geo::OSM::DBI::Primitive          \n" unless $rel_ch -> isa('Geo::OSM::DBI::Primitive'          );
+  print "$rel_ch is not a Geo::OSM::Primitive::Relation     \n" unless $rel_ch -> isa('Geo::OSM::Primitive::Relation'     );
+  print "$rel_ch is not a Geo::OSM::Primitive               \n" unless $rel_ch -> isa('Geo::OSM::Primitive'               );
+
+  members_ch($rel_ch);
  
+}
+sub members_ch {
+
+  my $rel_ch = shift;
+
+  open (my $gotten, '>:utf8', 'gotten/members_ch') or die;
+  for my $member_ch ($rel_ch->members()) {
+    printf $gotten "%11d %3s %-60s %-10s\n", $member_ch->{id}, $member_ch->primitive_type, $member_ch->name // '-', $member_ch->role($rel_ch);
+  }
+  close $gotten;
+
+  if (compare("expected/members_ch", "gotten/members_ch")) {
+    print "! members_ch differs !\n";
+  }
+
 }
