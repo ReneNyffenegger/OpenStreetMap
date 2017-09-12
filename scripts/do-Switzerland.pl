@@ -4,7 +4,12 @@ use strict;
 
 use DBI;
 use Geo::OSM::DBI::CH;
+use Geo::OSM::Render::Projection::CH_LV03;
+use Geo::OSM::Render::Renderer::SVG;
+use Geo::OSM::Render::Viewport::Clipped;
+
 use File::Compare;
+
 
 my $dbh = DBI->connect("dbi:SQLite:dbname=../db/ch.db", '', '', {sqlite_unicode=>1}) or die "does not exist";
 $dbh->{AutoCommit} = 0;
@@ -12,8 +17,8 @@ $dbh->{AutoCommit} = 0;
 my $osm_db = Geo::OSM::DBI::CH->new($dbh);
 
 
-municipalities();
-municipalities_area_tables();
+# municipalities();
+# municipalities_area_tables();
 tests();
 
 sub municipalities { #_{
@@ -137,6 +142,7 @@ sub tests {
   print "$rel_ch is not a Geo::OSM::Primitive               \n" unless $rel_ch -> isa('Geo::OSM::Primitive'               );
 
   members_ch($rel_ch);
+  border_ch ($rel_ch);
  
 }
 sub members_ch {
@@ -146,11 +152,60 @@ sub members_ch {
   open (my $gotten, '>:utf8', 'gotten/members_ch') or die;
   for my $member_ch ($rel_ch->members()) {
     printf $gotten "%11d %3s %-60s %-10s\n", $member_ch->{id}, $member_ch->primitive_type, $member_ch->name // '-', $member_ch->role($rel_ch);
+
+#   if ($member_ch->primitive_type eq 'way') {
+#     my @nodes = $member_ch->nodes;
+#     for my $node (@nodes) {
+#       printf("%12.9f %12.9f\n", $node->lat, $node->lon);
+#     }
+#   }
+
   }
   close $gotten;
 
   if (compare("expected/members_ch", "gotten/members_ch")) {
     print "! members_ch differs !\n";
   }
+
+}
+sub border_ch {
+
+  my $rel_ch = shift;
+
+  my $projection     = Geo::OSM::Render::Projection::CH_LV03->new();
+
+  my $viewport       = Geo::OSM::Render::Viewport::Clipped  ->new(
+     x_of_map_0       =>  483_000,
+     x_of_map_width   =>  834_000,
+     y_of_map_0       =>  299_000,
+     y_of_map_height  =>   74_000,
+     max_width_height => 1000
+  );
+
+  my $renderer = Geo::OSM::Render::Renderer::SVG->new (
+     'border_ch.svg',
+     $projection,
+     $viewport
+  );
+
+  for my $member_ch ($rel_ch->members()) {
+
+    if ($member_ch->primitive_type eq 'way') {
+      my @nodes = $member_ch->nodes;
+
+      my ($lat_start, $lon_start, $lat_end, $lon_end) = $member_ch -> start_end_coordinates();
+
+      $renderer->line($lat_start, $lon_start, $lat_end, $lon_end,
+        styles=>{
+          'stroke-width' => '1',
+          'stroke'       => 'blue',
+        }
+      );
+
+
+    }
+  }
+
+  $renderer->end();
 
 }
