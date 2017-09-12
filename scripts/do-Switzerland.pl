@@ -7,6 +7,7 @@ use Geo::OSM::DBI::CH;
 use Geo::OSM::Render::Projection::CH_LV03;
 use Geo::OSM::Render::Renderer::SVG;
 use Geo::OSM::Render::Viewport::Clipped;
+use Geo::Coordinates::Converter::LV03;
 
 use File::Compare;
 
@@ -86,8 +87,7 @@ sub municipalities_area_tables { #_{
   }
 
 } #_}
-
-sub tests {
+sub tests { #_{
 
   my @rel_ids_de = $osm_db->rel_ids_ISO_3166_1('DE');
   if (@rel_ids_de == 3) {
@@ -141,11 +141,12 @@ sub tests {
   print "$rel_ch is not a Geo::OSM::Primitive::Relation     \n" unless $rel_ch -> isa('Geo::OSM::Primitive::Relation'     );
   print "$rel_ch is not a Geo::OSM::Primitive               \n" unless $rel_ch -> isa('Geo::OSM::Primitive'               );
 
-  members_ch($rel_ch);
-  border_ch ($rel_ch);
+  members_ch  ($rel_ch);
+  border_ch   ($rel_ch);
+  draw_pfungen($rel_ch);
  
-}
-sub members_ch {
+} #_}
+sub members_ch { #_{
 
   my $rel_ch = shift;
 
@@ -167,8 +168,8 @@ sub members_ch {
     print "! members_ch differs !\n";
   }
 
-}
-sub border_ch {
+} #_}
+sub border_ch { #_{
 
   my $rel_ch = shift;
 
@@ -208,4 +209,67 @@ sub border_ch {
 
   $renderer->end();
 
-}
+} #_}
+sub draw_pfungen { #_{
+
+  my $rel_ch = shift;
+
+  my $rel_pfungen = $osm_db->municipality_ch(bfs_no=>224);
+
+  printf "Pfungen should be %s\n", $rel_pfungen->name unless $rel_pfungen->name eq 'Pfungen';
+  my $lat_min = $rel_pfungen->{cache}{todo}{lat_min};
+  my $lat_max = $rel_pfungen->{cache}{todo}{lat_max};
+  my $lon_min = $rel_pfungen->{cache}{todo}{lon_min};
+  my $lon_max = $rel_pfungen->{cache}{todo}{lon_max};
+  printf "Pfungen: lat min is: %f\n", $lat_min unless sprintf("%f", $lat_min) eq '47.497439';
+  printf "Pfungen: lat max is: %f\n", $lat_max unless sprintf("%f", $lat_max) eq '47.521853';
+  printf "Pfungen: lon min is: %f\n", $lon_min unless sprintf("%f", $lon_min) eq  '8617642';
+  printf "Pfungen: lon max is: %f\n", $lon_max unless sprintf("%f", $lon_max) eq  '8.661128';
+
+#
+# Approximation:
+  my ($x_min, $y_min) = Geo::Coordinates::Converter::LV03::lat_lng_2_y_x($lat_min, $lon_min);
+  my ($x_max, $y_max) = Geo::Coordinates::Converter::LV03::lat_lng_2_y_x($lat_max, $lon_max);
+
+  my $db_pfungen='../db/area/Pfungen_224_1682188.db';
+  die unless -f $db_pfungen;
+  my $dbh_pfungen = DBI->connect("dbi:SQLite:dbname=$db_pfungen", '', '', {sqlite_unicode=>1}) or die;
+  $dbh_pfungen->{AutoCommit} = 0;
+
+  my $osm_db_pfungen = Geo::OSM::DBI::CH->new($dbh_pfungen) or die;
+
+  my $osm_vp_cl      = Geo::OSM::Render::Viewport::Clipped  ->new(
+    x_of_map_0       => $x_min, # 484.750
+    x_of_map_width   => $x_max, # 828.693
+    y_of_map_0       => $y_max, # 299.778
+    y_of_map_height  => $y_min, #  75.129
+    max_width_height => 1000
+  );
+  my $osm_proj_ch    = Geo::OSM::Render::Projection::CH_LV03->new();
+  my $osm_renderer_svg = Geo::OSM::Render::Renderer::SVG->new(
+   'Pfungen.svg',
+    $osm_vp_cl,
+    $osm_proj_ch
+  );
+
+
+  my @ways = $osm_db_pfungen->ways();
+  printf "%d ways in Pfungen\n", scalar @ways;
+
+  for my $way (@ways) {
+    $osm_renderer_svg->render_way($way,
+      styles=> {
+        'stroke'         => 'rgb( 255, 127, 30)',
+        'stroke-width'   => '1px',
+        'fill'           => 'none',
+      }
+    );
+
+  }
+
+# my $rel_pfungen_area = Geo::OSM::DBI::Primitive::Relation->new($rel_pfungen->{id}, $osm_db_pfungen);
+
+  $osm_renderer_svg->end();
+  $dbh_pfungen->commit;
+
+} #_}
