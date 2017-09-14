@@ -1,3 +1,6 @@
+--
+--  Show names of tags with key = 'natural' and val = 'yes'.
+--
 .mode  column
 .width 7 7 7 7 40 11 11
 .header on
