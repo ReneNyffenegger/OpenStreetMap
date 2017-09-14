@@ -11,4 +11,4 @@ where
 group by
   val
 order by
-  count(*) desc
+  count(*);
