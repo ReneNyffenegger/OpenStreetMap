@@ -61,7 +61,12 @@ sub process_query { #_{
 
      my $url = '';
 
-     $url = "<a href='$row->{url}'>$row->{url}</a>" if $row->{url};
+     if (my $url_ = $row->{url}) {
+       if (substr($url_, 0, 3) eq 'www') {
+         $url_ = "http://$url_";
+       }
+       $url = "<a href='$url_'>$row->{url}</a>" if $row->{url};
+     }
 
 
      print $html "<tr>";
