@@ -14,8 +14,9 @@ sub process_query { #_{
 
   die unless -f $sql_file;
 
-  my ($html_file) = $sql_file =~ m/(.*)\.sql$/;
-  $html_file .= '.html';
+  my ($filename_no_suffix) = $sql_file =~ m/(.*)\.sql$/;
+# my ($html_file) = $sql_file =~ m/(.*)\.sql$/;
+# $html_file .= '.html';
 
   my $db_file = "$ENV{github_root}OpenStreetMap/db/ch.db";
   die "DB $db_file does not exist" unless -f $db_file;
@@ -24,10 +25,9 @@ sub process_query { #_{
     { sqlite_unicode => 1 }
   ) or die;
 
-  open (my $html, '>:utf8', "../web/$html_file") or die;
-  print $html qq{<html><head>
-  <meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
-  <title>$title</title></head></html>};
+  my $html = start_html($filename_no_suffix, $title);
+  my $kml  = start_kml ($filename_no_suffix);
+
 
   my $sql_text = slurp_file($sql_file);
 
@@ -40,7 +40,8 @@ sub process_query { #_{
 
 
   print $html "<table>\n";
-  while (my $row = $sth->fetchrow_hashref) {
+  while (my $row = $sth->fetchrow_hashref) { #_{
+
      my $name = $row->{name_de};
      $name = $row->{name} unless $name;
      next unless $name;
@@ -76,10 +77,14 @@ sub process_query { #_{
      print $html "<td>$url</td>";
      print $html "</tr>\n";
 
-  }
-  print $html "</table>";
 
-  print $html "</body></html>";
+     print $kml "<Placemark><name>$name</name><Point><extrude>1</extrude><altitudeMode>relativeToGround</altitudeMode><coordinates>$row->{lon},$row->{lat},800</coordinates></Point></Placemark>\n";
+
+  } #_}
+
+  print $html "</table>";
+  end_html($html);
+  end_kml ($kml );
 
 } #_}
 
@@ -91,4 +96,47 @@ sub slurp_file { #_{
   $ret .= $_ while (<$fh>);
   return $ret;
 
+} #_}
+
+sub start_html { #_{
+
+  my $filename_no_suffix = shift;
+  my $title              = shift;
+
+  open (my $html, '>:utf8', "../web/$filename_no_suffix.html") or die;
+  print $html qq{<html><head>
+  <meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
+  <title>$title</title></head></html>};
+
+  return $html;
+
+} #_}
+
+sub start_kml  { #_{
+  my $filename_no_suffix = shift;
+  open (my $kml, '>:utf8', "../web/$filename_no_suffix.kml") or die;
+
+  print $kml qq{<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+};
+
+
+  return $kml;
+
+} #_}
+
+sub end_html { #_{
+  my $html = shift;
+
+  print $html "</body></html>";
+  close $html;
+} #_}
+
+sub end_kml { #_{
+  my $kml = shift;
+
+  print $kml "</Document>
+</kml>";
+  close $kml;
 } #_}
