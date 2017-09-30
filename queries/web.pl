@@ -26,7 +26,7 @@ sub process_query { #_{
   ) or die;
 
   my $html = start_html($filename_no_suffix, $title);
-  my $kml  = start_kml ($filename_no_suffix);
+  my $kml  = start_kml ($filename_no_suffix, $title);
 
 
   my $sql_text = slurp_file($sql_file);
@@ -78,7 +78,14 @@ sub process_query { #_{
      print $html "</tr>\n";
 
 
-     print $kml "<Placemark><name>$name</name><Point><extrude>1</extrude><altitudeMode>relativeToGround</altitudeMode><coordinates>$row->{lon},$row->{lat},800</coordinates></Point></Placemark>\n";
+     print $kml "<Placemark>
+  <name>$name</name>
+  <styleUrl>#alphuette</styleUrl>
+  <Point>
+    <extrude>1</extrude>
+    <altitudeMode>relativeToGround</altitudeMode>
+    <coordinates>$row->{lon},$row->{lat},800</coordinates>
+  </Point></Placemark>";
 
   } #_}
 
@@ -106,7 +113,17 @@ sub start_html { #_{
   open (my $html, '>:utf8', "../web/$filename_no_suffix.html") or die;
   print $html qq{<html><head>
   <meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
-  <title>$title</title></head></html>};
+  <title>$title</title></head></html>
+  
+  <img src="$filename_no_suffix.png"/>
+
+  <p>
+  Diese <a href="$filename_no_suffix.kml">Google Earth (kml) Datei</a> enthält alle Alphütten, die ich in Open Street Map mit
+  <a href='https://github.com/ReneNyffenegger/OpenStreetMap/blob/master/queries/alphuetten.sql'>diesem SQL Query</a> gefunden habe.
+
+  <p>Die Alphütten auch aus Liste mit Links auf die Open Street Map Karte:
+
+};
 
   return $html;
 
@@ -114,11 +131,69 @@ sub start_html { #_{
 
 sub start_kml  { #_{
   my $filename_no_suffix = shift;
+  my $title              = shift;
   open (my $kml, '>:utf8', "../web/$filename_no_suffix.kml") or die;
 
   print $kml qq{<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
+<name>$title</name>
+
+	<Style id="alphuette">
+		<IconStyle>
+			<Icon>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<color>ffc341ff</color>
+		</LabelStyle>
+		<ListStyle>
+		</ListStyle>
+		<LineStyle>
+			<color>ffc341ff</color>
+			<width>3</width>
+		</LineStyle>
+	</Style>
+
+<!--
+	<Style id="alphuette_normal">
+		<IconStyle>
+			<Icon>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<color>ffc341ff</color>
+		</LabelStyle>
+		<ListStyle>
+		</ListStyle>
+		<LineStyle>
+			<color>ffc341ff</color>
+			<width>3</width>
+		</LineStyle>
+	</Style>
+
+	<Style id="alphuette_highlight">
+		<IconStyle>
+			<Icon>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<color>ff00aaff</color>
+		</LabelStyle>
+		<ListStyle>
+		</ListStyle>
+		<LineStyle>
+			<color>ff0000ff</color>
+			<width>3</width>
+		</LineStyle>
+	</Style>
+
+	<StyleMap id="alphuette">
+		<Pair><key>normal</key>   <styleUrl>#alphuette_normal</styleUrl>   </Pair>
+		<Pair><key>highlight</key><styleUrl>#alphuette_highlight</styleUrl></Pair>
+	</StyleMap>
+  -->
+
 };
 
 
