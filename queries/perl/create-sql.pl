@@ -2,8 +2,14 @@
 use warnings;
 use strict;
 
-# use DBI;
-# my $dbh = DBI->connect('dbi:SQLite:dbname=../../db/ch.db') or die "Could not create the.db";
+use DBI;
+
+use osm_queries;
+
+
+my $dbh = DBI->connect('dbi:SQLite:dbname=../../db/ch.db',  '', '', { sqlite_unicode => 1 }) or die "Could not create the.db";
+
+my $kml = osm_queries::start_kml('Parklplaetze');
 
 
 
@@ -102,14 +108,39 @@ from
 ;";
 
 
-# my $sth = $dbh->prepare($sql_stmt);
-# $sth->execute;
-# while (my $r = $sth->fetchrow_hashref) {
-#}
+
+my $sth = $dbh->prepare($sql_stmt);
+$sth->execute;
+while (my $r = $sth->fetchrow_hashref) {
 
 
-print ".mode column\n";
-print ".header on\n";
-print ".timer on\n";
-print "$dot_width\n";
-print $sql_stmt;
+  my $name = $r->{name} // '?';
+
+  $name =~ s/&/&amp;/g;
+
+     print $kml "<Placemark>
+     <name>$name</name>
+     <Point>
+    <coordinates>$r->{lon},$r->{lat}</coordinates>
+    </Point>
+  </Placemark>";
+
+#     print $kml "<Placemark>
+#  <name>$name</name>
+#  <styleUrl>#alphuette</styleUrl>
+#  <Point>
+#    <extrude>1</extrude>
+#    <altitudeMode>relativeToGround</altitudeMode>
+#    <coordinates>$r->{lon},$r->{lat},800</coordinates>
+#  </Point></Placemark>";
+
+
+}
+
+osm_queries::end_kml($kml );
+
+# print ".mode column\n";
+# print ".header on\n";
+# print ".timer on\n";
+# print "$dot_width\n";
+# print $sql_stmt;
