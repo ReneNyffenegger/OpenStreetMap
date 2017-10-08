@@ -3,7 +3,6 @@ use warnings;
 use strict;
 
 use DBI;
-
 use osm_queries;
 
 
@@ -108,6 +107,7 @@ from
 ;";
 
 
+# print $sql_stmt;
 
 my $sth = $dbh->prepare($sql_stmt);
 $sth->execute;
