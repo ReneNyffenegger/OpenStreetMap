@@ -83,12 +83,38 @@ while (my $r = $sth->fetchrow_hashref) {
   }
 
 
+  my $trs = '';
+
+
+  if ($r->{parking          } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Parking:'        , $r->{parking          }); }
+  if ($r->{access           } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Access:'         , $r->{access           }); }
+  if ($r->{fee              } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Fee:'            , $r->{fee              }); }
+  if ($r->{capacity         } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Capacity:'       , $r->{capacity         }); }
+  if ($r->{surface          } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Surface:'        , $r->{surface          }); }
+  if ($r->{source           } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Source:'         , $r->{source           }); }
+  if ($r->{park_ride        } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Park &amp; ride:', $r->{park_ride        }); }
+  if ($r->{supervise        } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Supervised:'     , $r->{supervised       }); }
+  if ($r->{wheelchair       } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Wheelchair:'     , $r->{wheelchair       }); }
+  if ($r->{description      } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Description'     , $r->{description      }); }
+  if ($r->{addr_street      } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Street:'         , $r->{addr_street      }); }
+  if ($r->{addr_housuenumber} ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Street:'         , $r->{addr_housuenumber}); }
+  if ($r->{addr_postcode    } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'PLZ:'            , $r->{addr_postcode    }); }
+
+
+  my $table = '';
+
+  if ($trs) {
+    $table = "<description> <![CDATA[ <table>$trs</table> ]]> </description>";
+  }
+
+
+
      print $kml "<Placemark>
 		<styleUrl>$style_url</styleUrl>
      $name_tag
-     <Point>
-    <coordinates>$r->{lon},$r->{lat}</coordinates>
-    </Point>
+     $table
+     <Point><coordinates>$r->{lon},$r->{lat}</coordinates></Point>
+
   </Placemark>";
 
 } #_}
