@@ -1,11 +1,20 @@
 package osm_queries;
 
+sub start_file { #_{
+ 
+  my $filename = shift;
+  open (my $file, '>:utf8', "../../web/$filename") or die "could not open $filename - $!";
+
+  return $file;
+
+} #_}
 sub start_kml { #_{
 
   my $filename_no_suffix = shift;
   my $title              = shift;
 
-  open (my $kml, '>:utf8', "../../web/$filename_no_suffix.kml") or die "$filename_no_suffix - $!";
+  my $kml = start_file("$filename_no_suffix.kml");
+# open (my $kml, '>:utf8', "../../web/$filename_no_suffix.kml") or die "$filename_no_suffix - $!";
 
   print $kml qq{<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
@@ -21,6 +30,10 @@ sub start_kml { #_{
 	<Style id="white-pin"     ><IconStyle><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png   </href></Icon><hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/></IconStyle><ListStyle></ListStyle></Style> 
 	<Style id="yellow-pin"    ><IconStyle><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png   </href></Icon><hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/></IconStyle><ListStyle></ListStyle></Style> 
 
+
+};
+
+my $drop_me = qq{
 <!--
 
 	<Style id="alphuette">
@@ -74,11 +87,26 @@ sub start_kml { #_{
 		<Pair><key>highlight</key><styleUrl>#alphuette_highlight</styleUrl></Pair>
 	</StyleMap>
   -->
-
-};
+  };
 
   return $kml;
 
+} #_}
+sub start_html { #_{
+  my $filename_no_suffix = shift;
+  my $title              = shift;
+  my $introText          = shift;
+  my $html = start_file("$filename_no_suffix.html");
+
+  print $html qq{<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>$title</title>
+</head><body>
+<h1>$title</h1>
+$introText
+<p>
+};
+  return $html;
 } #_}
 sub end_kml { #_{
   my $kml = shift;
@@ -86,6 +114,16 @@ sub end_kml { #_{
   print $kml "</Document>
 </kml>";
   close $kml;
+} #_}
+sub end_html { #_{
+  my $html = shift;
+
+  print $html qq{
+  <hr>
+    <a href='http://renenyffenegger.ch/development/OpenStreetMap/queries'>Weitere Open Street Map queries</a>.
+  </body>
+</html>};
+  close $html;
 } #_}
 
 1;

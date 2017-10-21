@@ -24,6 +24,9 @@ SQL
 $sth->execute;
 my $last_rel_id = 0;
 my $kml;
+my $html = osm_queries::start_html("Parkplaetze/index", "Parkplätze in Gemeinden der Schweiz", "Parkplätze der Schweiz für Google Earth aus OpenStreetMap<br>
+  Ist der Pin rot, hat der Parkplatz <code>access=private</code>; wenn gelb, dann <code>access=customers</code>, wenn grün, dann <code>fee=no</code>, wenn violett (purple? dunkelpink?), dann <code>fee=yes</code>.
+");
 while (my $r = $sth->fetchrow_hashref) {
 
 # print join "\n", keys %{$r};
@@ -35,7 +38,7 @@ while (my $r = $sth->fetchrow_hashref) {
   if ($last_rel_id != $r->{rel_id}) {
 
     if ($last_rel_id) {
-       osm_queries::end_kml($kml );
+       osm_queries::end_kml ($kml );
     }
 
     my $name_municipality = "$r->{name_municipality}-$r->{rel_id}";
@@ -51,9 +54,12 @@ while (my $r = $sth->fetchrow_hashref) {
     $name_municipality =~ s/é/e/g;
     $name_municipality =~ s/à/a/g;
     $name_municipality =~ s/á/a/g;
+    $name_municipality =~ s/'//g;
     $name_municipality =~ s/\//_/g;
 
-    $kml = osm_queries::start_kml("Parkplaetze/$name_municipality");
+    $kml  = osm_queries::start_kml("Parkplaetze/$name_municipality");
+    print $html " / <a href='$name_municipality.kml'>$r->{name_municipality}</a>";
+#   $html = osm_queries::start_html("Parkplaetze/$name_municipality", $r->{name_municipality});
 
     $last_rel_id = $r->{rel_id};
 
@@ -67,12 +73,18 @@ while (my $r = $sth->fetchrow_hashref) {
   }
 
   my $style_url;
-  if (defined $r->{fee}) {
+  if (defined $r->{access} and $r->{access} eq 'private') {
+     $style_url = '#red-pin';
+  }
+  elsif (defined $r->{access} and $r->{access} eq 'customers') {
+     $style_url = '#yellow-pin';
+  }
+  elsif (defined $r->{fee}) {
     if ($r->{fee} eq 'no') {
        $style_url = '#green-pin';
     }
     elsif ($r->{fee} eq 'yes') {
-       $style_url = '#red-pin';
+       $style_url = '#purple-pin';
     }
     else {
        $style_url = '#white-pin';
@@ -120,3 +132,4 @@ while (my $r = $sth->fetchrow_hashref) {
 } #_}
 
 osm_queries::end_kml($kml );
+osm_queries::end_html($html);
