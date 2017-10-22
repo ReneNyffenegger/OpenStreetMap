@@ -144,21 +144,21 @@ sub create_pivot_sql { #_{
     { key => 'access'           , w =>    13},
     { key => 'fee'              , w =>    10},
     { key => 'capacity'         , w =>     4},
-    { key => 'name'             , w =>    30}, # should probably be always included
+#   { key => 'name'             , w =>    30},
     { key => 'surface'          , w =>    10},
     { key => 'source'           , w =>    10},
     { key => 'park_ride'        , w =>     3},
     { key => 'supervised'       , w =>     3},
     { key => 'wheelchair'       , w =>     3},
-    { key => 'addr:street'      , w =>    30},
-    { key => 'addr:housenumber' , w =>     4},
-    { key => 'addr:postcode'    , w =>     4},
+#   { key => 'addr:street'      , w =>    30},
+#   { key => 'addr:housenumber' , w =>     4},
+#   { key => 'addr:postcode'    , w =>     4},
     { key => 'description'      , w =>    10},
   );
 
   print osm_queries::create_pivot_sql(
-    'amenity',
-    'parking',
+    'amenity', # key
+    'parking', # val
     \@cols);
 
 

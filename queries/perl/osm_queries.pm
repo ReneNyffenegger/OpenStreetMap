@@ -136,6 +136,13 @@ sub create_pivot_sql { #_{
   
   my @cols = @$cols_ref;
 
+  unshift @cols, (
+    { key => 'name'             , w => 30},
+    { key => 'addr:street'      , w => 30},
+    { key => 'addr:housenumber' , w =>  4},
+    { key => 'addr:postcode'    , w =>  4},
+  );
+
   my $dot_width = ".width 11 11 11 11";
 
   my $cols_stmt = 'wy.nod_id
@@ -202,9 +209,6 @@ select
   $cols_stmt
 from
   $table_stmt
--- where
---   ini.key = '$key' and
---   ini.val = '$val'
 ;"; #_}
 
   return $sql_stmt;
