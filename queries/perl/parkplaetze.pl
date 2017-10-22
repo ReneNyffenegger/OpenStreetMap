@@ -6,6 +6,10 @@ use utf8;
 use DBI;
 use osm_queries;
 
+create_pivot_sql();
+
+exit;
+
 my $dbh = DBI->connect('dbi:SQLite:dbname=../../db/ch.db',  '', '', { sqlite_unicode => 1 }) or die "Could not create the.db";
 
 my $sth = $dbh->prepare(<<SQL);
@@ -27,7 +31,7 @@ my $kml;
 my $html = osm_queries::start_html("Parkplaetze/index", "Parkplätze in Gemeinden der Schweiz", "Parkplätze der Schweiz für Google Earth aus OpenStreetMap<br>
   Ist der Pin rot, hat der Parkplatz <code>access=private</code>; wenn gelb, dann <code>access=customers</code>, wenn grün, dann <code>fee=no</code>, wenn violett (purple? dunkelpink?), dann <code>fee=yes</code>.
 ");
-while (my $r = $sth->fetchrow_hashref) {
+while (my $r = $sth->fetchrow_hashref) {#_{
 
 # print join "\n", keys %{$r};
 # exit;
@@ -129,7 +133,33 @@ while (my $r = $sth->fetchrow_hashref) {
 
   </Placemark>";
 
+  osm_queries::end_kml($kml );
+  osm_queries::end_html($html);
 } #_}
 
-osm_queries::end_kml($kml );
-osm_queries::end_html($html);
+sub create_pivot_sql { #_{
+
+  my @cols = (
+    { key => 'parking'          , w =>    12},
+    { key => 'access'           , w =>    13},
+    { key => 'fee'              , w =>    10},
+    { key => 'capacity'         , w =>     4},
+    { key => 'name'             , w =>    30}, # should probably be always included
+    { key => 'surface'          , w =>    10},
+    { key => 'source'           , w =>    10},
+    { key => 'park_ride'        , w =>     3},
+    { key => 'supervised'       , w =>     3},
+    { key => 'wheelchair'       , w =>     3},
+    { key => 'addr:street'      , w =>    30},
+    { key => 'addr:housenumber' , w =>     4},
+    { key => 'addr:postcode'    , w =>     4},
+    { key => 'description'      , w =>    10},
+  );
+
+  print osm_queries::create_pivot_sql(
+    'amenity',
+    'parking',
+    \@cols);
+
+
+} #_}
