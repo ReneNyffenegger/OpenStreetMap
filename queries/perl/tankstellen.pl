@@ -132,9 +132,6 @@ SQL
     print $html "<tr><td>" . osm_queries::html_escape($r->{contact_website}) . "</td></tr>" if defined $r->{contact_website};
     print $html "</table></td>";
 
-    print $html "<td>" . osm_queries::html_escape($r->{addr_street}) . ' ' .
-                         osm_queries::html_escape($r->{addr_housenumber}) . "</td>";
-
     print $html "<td>" . osm_queries::html_escape($r->{note}) . "</td>";
     print $html "</tr>\n";
 
