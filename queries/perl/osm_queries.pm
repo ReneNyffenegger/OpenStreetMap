@@ -2,6 +2,16 @@ package osm_queries;
 use warnings;
 use strict;
 
+use DBI;
+
+
+sub open_db { #_{
+
+  my $dbh = DBI->connect('dbi:SQLite:dbname=../../db/ch.db',  '', '', { sqlite_unicode => 1 }) or die "Could not open db";
+  return $dbh;
+
+} #_}
+
 sub start_file { #_{
  
   my $filename = shift;
@@ -103,6 +113,15 @@ sub start_html { #_{
   print $html qq{<html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>$title</title>
+<style type='text/css'> 
+  table {border-collapse: collapse}
+
+  td { border-left: 1px solid #dea; vertical-align: top }
+
+  tr.nextRow { border-bottom: 1px solid #333 }
+
+
+</style>
 </head><body>
 <h1>$title</h1>
 $introText
@@ -128,6 +147,139 @@ sub end_html { #_{
   close $html;
 } #_}
 
+sub html_escape { #_{
+  my $text = shift;
+  return '' unless defined $text;
+  $text =~ s/&/&amp;/g;
+  $text =~ s/</&lt;/g;
+  $text =~ s/>/&gt;/g;
+
+  return $text;
+
+} #_}
+
+sub html_a_way_nod_id { #_{
+  my $sql_r = shift;
+
+  if ($sql_r->{nod_id}) {return "<a href='http://www.openstreetmap.org/node/$sql_r->{nod_id}'>Node $sql_r->{nod_id}</a>"; }
+  if ($sql_r->{way_id}) {return "<a href='http://www.openstreetmap.org/way/$sql_r->{way_id}' >Way $sql_r->{way_id} </a>"; }
+
+
+} #_}
+
+sub html_td_shop { #_{
+  my $sql_r = shift;
+
+  my $text = '';
+
+  goto RET unless defined $sql_r->{shop};
+  goto RET        if      $sql_r->{shop} eq 'no';
+
+  if ($sql_r->{shop} eq 'yes') {
+    $text = 'Mit Shop';
+    goto RET;
+  }
+  if ($sql_r->{shop} eq 'yes') {
+    $text = 'Mit Shop';
+    goto RET;
+  }
+
+
+RET:
+  return "<td>$text</td>";
+
+} #_}
+
+sub td_key_val { #_{
+  my $key_textHuman = shift;
+  my $val           = shift;
+
+  if ($val) { return sprintf("<tr><td>%s:</td><td>%s</td></tr>", html_escape($key_textHuman), html_escape($val)); }
+  return '';
+
+} #_}
+
+sub kml_placemark { #_{
+
+  my $kml   = shift;
+  my $sql_r = shift;
+
+  die unless defined $sql_r->{lon};
+  die unless defined $sql_r->{lat};
+
+  my $style_url = '#white-pin';
+
+  my $trs = '';
+
+
+# $trs .= td_key_val('Way ID'   , $sql_r->{way_id       });
+# $trs .= td_key_val('Rel ID'   , $sql_r->{rel_id       });
+
+  if ($sql_r->{parking          } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Parking:'        , $sql_r->{parking          }); }
+  if ($sql_r->{access           } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Access:'         , $sql_r->{access           }); }
+  if ($sql_r->{fee              } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Fee:'            , $sql_r->{fee              }); }
+  if ($sql_r->{capacity         } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Capacity:'       , $sql_r->{capacity         }); }
+  if ($sql_r->{surface          } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Surface:'        , $sql_r->{surface          }); }
+  if ($sql_r->{source           } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Source:'         , $sql_r->{source           }); }
+  if ($sql_r->{park_ride        } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Park &amp; ride:', $sql_r->{park_ride        }); }
+  if ($sql_r->{supervise        } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Supervised:'     , $sql_r->{supervised       }); }
+  if ($sql_r->{wheelchair       } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Wheelchair:'     , $sql_r->{wheelchair       }); }
+  if ($sql_r->{description      } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Description'     , $sql_r->{description      }); }
+  if ($sql_r->{addr_street      } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Street:'         , $sql_r->{addr_street      }); }
+  if ($sql_r->{addr_housuenumber} ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Street:'         , $sql_r->{addr_housuenumber}); }
+  if ($sql_r->{addr_postcode    } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'PLZ:'            , $sql_r->{addr_postcode    }); }
+
+# tankstellen.pl
+
+  $trs .= td_key_val('Operator'   , $sql_r->{operator       });
+  $trs .= td_key_val('Shop'       , $sql_r->{shop           });
+  $trs .= td_key_val('Diesel'     , $sql_r->{diesel         });
+  $trs .= td_key_val('Okt 95'     , $sql_r->{fuel_octane_95 });
+  $trs .= td_key_val('Okt 91'     , $sql_r->{fuel_octane_91 });
+  $trs .= td_key_val('Okt 98'     , $sql_r->{fuel_octane_98 });
+  $trs .= td_key_val('Okt 100'    , $sql_r->{fuel_octane_100});
+  $trs .= td_key_val('Buione 100' , $sql_r->{fuel_buione_100});
+
+# if ($r->{operator         } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Operator:'       , $r->{operator         }); }
+# if ($r->{shop             } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Shop'            , $r->{shop             }); }
+# if ($r->{diesel           } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Diesel:'         , $r->{dierator         }); }
+# if ($r->{fuel_octane_95   } ) { $trs .= sprintf("<tr><td>%s</td><td>%s</td></tr>", 'Okt 95:'         , $r->{operator         }); }
+
+  my $table = '';
+
+  my $html_a_nod_or_way;
+  if ($sql_r->{nod_id}) { $html_a_nod_or_way = "<a name='link_id' id='link_id' href='javascript:window.open(\"about:blank\");' onclick=\"window.open('http://www.openstreetmap.org/node/$sql_r->{nod_id}');\">Node $sql_r->{nod_id}</a>"; }
+  if ($sql_r->{way_id}) { $html_a_nod_or_way = "<a name='link_id' id='link_id' href='javascript:window.open(\"about:blank\");' onclick=\"window.open('http://www.openstreetmap.org/way/$sql_r->{way_id}' );\">Way $sql_r->{way_id}</a>"; }
+
+# if ($trs) {
+    $table = "<description> <![CDATA[ 
+    $html_a_nod_or_way
+    <table>$trs</table> 
+    ]]> </description>";
+# }
+
+  my $name_tag = '';
+  if (defined $sql_r->{name}) {
+    my $name = html_escape($sql_r->{name});
+    $name_tag = "<name>$name</name>";
+  }
+
+
+     print $kml "\n<Placemark>";
+
+
+
+     print $kml "
+		<styleUrl>$style_url</styleUrl>
+     $name_tag
+     $table
+     <Point><coordinates>$sql_r->{lon},$sql_r->{lat}</coordinates></Point>
+
+  </Placemark>";
+
+
+} #_}
+
 sub create_pivot_sql { #_{
 
   my $key      = shift;
@@ -141,6 +293,7 @@ sub create_pivot_sql { #_{
     { key => 'addr:street'      , w => 30},
     { key => 'addr:housenumber' , w =>  4},
     { key => 'addr:postcode'    , w =>  4},
+    { key => 'addr:city'        , w => 30},
   );
 
   my $dot_width = ".width 11 11 11 11";
@@ -179,7 +332,8 @@ with ini as (
     tag
   where
     key = '$key' and
-    val = '$val'
+    val = '$val' and
+   (nod_id is not null or way_id is not null)
 ),
 nd as (
   select

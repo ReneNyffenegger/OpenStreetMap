@@ -1,5 +1,5 @@
 .mode column
-.width 7 20
+.width 7 50
 .header on
 
 select

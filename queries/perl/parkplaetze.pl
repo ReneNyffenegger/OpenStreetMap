@@ -3,14 +3,14 @@ use warnings;
 use strict;
 use utf8;
 
-use DBI;
+# use DBI;
 use osm_queries;
 
 create_pivot_sql();
 
 exit;
 
-my $dbh = DBI->connect('dbi:SQLite:dbname=../../db/ch.db',  '', '', { sqlite_unicode => 1 }) or die "Could not create the.db";
+my $dbh = osm_queries::open_db();
 
 my $sth = $dbh->prepare(<<SQL);
 select
@@ -28,7 +28,7 @@ SQL
 $sth->execute;
 my $last_rel_id = 0;
 my $kml;
-my $html = osm_queries::start_html("Parkplaetze/index", "Parkplätze in Gemeinden der Schweiz", "Parkplätze der Schweiz für Google Earth aus OpenStreetMap<br>
+my $html = osm_queries::start_html("Parkplaetze/index", "Parkplätze in Gemeinden der Schweiz", "Parkplätze der Schweiz für Google Earth aus OpenStreetMap Daten<br>
   Ist der Pin rot, hat der Parkplatz <code>access=private</code>; wenn gelb, dann <code>access=customers</code>, wenn grün, dann <code>fee=no</code>, wenn violett (purple? dunkelpink?), dann <code>fee=yes</code>.
 ");
 while (my $r = $sth->fetchrow_hashref) {#_{
