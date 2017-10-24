@@ -13,9 +13,9 @@ from
             tg.way_id = gt.way_id or
             tg.rel_id = gt.rel_id
 where
-  tg.key = 'amenity' and
+--tg.key = 'amenity' and tg.val = 'fuel'
+  tg.key = 'shop'    and tg.val = 'supermarket'
 --tg.val = 'parking'
-  tg.val = 'fuel'
 order by
   tg.nod_id,
   tg.way_id,

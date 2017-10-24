@@ -163,6 +163,8 @@ sub html_a_way_nod_id { #_{
 
   if ($sql_r->{nod_id}) {return "<a href='http://www.openstreetmap.org/node/$sql_r->{nod_id}'>Node $sql_r->{nod_id}</a>"; }
   if ($sql_r->{way_id}) {return "<a href='http://www.openstreetmap.org/way/$sql_r->{way_id}' >Way $sql_r->{way_id} </a>"; }
+  if ($sql_r->{rel_id}) {return "<a href='http://www.openstreetmap.org/relation/$sql_r->{rel_id}'>Relation  $sql_r->{rel_id} </a>"; }
+
 
 
 } #_}

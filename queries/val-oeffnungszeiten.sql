@@ -6,4 +6,5 @@ select
 from
   tag
 where
-  val like '%ffnungszeit%';
+  key like 'opening_hours%' or
+  val like '%ffnungszeit%'
