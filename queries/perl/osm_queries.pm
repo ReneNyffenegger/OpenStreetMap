@@ -158,14 +158,53 @@ sub html_escape { #_{
 
 } #_}
 
+sub html_a { #_{
+  my $url       = shift;
+  my $text_html = shift;
+
+  return "<a href='$url'>$text_html</a>";
+  
+} #_}
+
+
+sub html_website { #_{
+  my $url_raw  = shift;
+
+  html_a($url_raw, html_escape($url_raw));
+} #_}
+
+sub html_email { #_{
+  my $email_raw  = shift;
+  return "<a href='emailto:$email_raw'>" . html_escape($email_raw) . "</a>";
+
+} #_}
+
+sub html_country_zip_city {
+  my $val = shift;
+
+  my $ret = '';
+
+  if (exists $val->{'addr:country'}) {
+    $ret = html_escape (delete $val->{'addr:country'});
+  }
+  if (exists $val->{'addr:postcode'}) {
+    $ret .= ' ' if $ret;
+    $ret .= html_escape (delete $val->{'addr:postcode'});
+  }
+  if (exists $val->{'addr:city'}) {
+    $ret .= ' ' if $ret;
+    $ret .= html_escape (delete $val->{'addr:city'});
+  }
+
+  return $ret;
+}
+
 sub html_a_way_nod_id { #_{
   my $sql_r = shift;
 
   if ($sql_r->{nod_id}) {return "<a href='http://www.openstreetmap.org/node/$sql_r->{nod_id}'>Node $sql_r->{nod_id}</a>"; }
   if ($sql_r->{way_id}) {return "<a href='http://www.openstreetmap.org/way/$sql_r->{way_id}' >Way $sql_r->{way_id} </a>"; }
   if ($sql_r->{rel_id}) {return "<a href='http://www.openstreetmap.org/relation/$sql_r->{rel_id}'>Relation  $sql_r->{rel_id} </a>"; }
-
-
 
 } #_}
 

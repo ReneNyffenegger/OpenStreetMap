@@ -11,6 +11,6 @@ where
 group by
   val
 order by
-  count(*) desc
+  count(*)
 -- limit 100
 ;
