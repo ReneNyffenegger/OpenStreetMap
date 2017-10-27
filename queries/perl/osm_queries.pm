@@ -191,9 +191,21 @@ sub html_country_zip_city {
     $ret .= ' ' if $ret;
     $ret .= html_escape (delete $val->{'addr:postcode'});
   }
+  elsif (exists $val->{'postcode'}) {
+    $ret .= ' ' if $ret;
+    $ret .= html_escape (delete $val->{'postcode'});
+  }
   if (exists $val->{'addr:city'}) {
     $ret .= ' ' if $ret;
     $ret .= html_escape (delete $val->{'addr:city'});
+  }
+  elsif (exists $val->{'x:city'}) {
+    $ret .= ' ' if $ret;
+    $ret .= html_escape(delete $val->{'x:city'});
+#   print $val->{'x:city'};
+  }
+  else {
+#   $ret .= ' !!! city expected !!!';
   }
 
   return $ret;
