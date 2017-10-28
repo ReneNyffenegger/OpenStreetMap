@@ -195,6 +195,10 @@ sub html_country_zip_city {
     $ret .= ' ' if $ret;
     $ret .= html_escape (delete $val->{'postcode'});
   }
+  elsif (exists $val->{'postal_code'}) {
+    $ret .= ' ' if $ret;
+    $ret .= html_escape (delete $val->{'postal_code'});
+  }
   if (exists $val->{'addr:city'}) {
     $ret .= ' ' if $ret;
     $ret .= html_escape (delete $val->{'addr:city'});

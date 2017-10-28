@@ -1,5 +1,17 @@
 #!/usr/bin/perl
 #
+#    TODO:
+#
+#       
+#      dispensing: yes/no
+#        in amenity=pharmacy
+#
+#      http://edwardbetts.com/osm-wikidata/2014-11-24/Shopping%20malls.html
+#      
+#      Koordinaten auf openstreetmap.org/mlat=...&mlon=...
+#
+#      centralkey: eurokey
+#
 #
 use warnings;
 use strict;
@@ -30,9 +42,9 @@ my $dbh = osm_queries::open_db();
 # key_val('shop', 'books');
 # key_val('shop', 'travel_agency');
 # key_val('shop', 'doityourself');
-  key_val('shop', 'gift');
+# key_val('shop', 'gift');
 # key_val('shop', 'mall');
-# key_val('shop', 'chemist');
+# key_val('shop', 'chemist');             # See also amenity=pharmacy
 # key_val('shop', 'mobile_phone');
 # key_val('shop', 'garden_centre');
 # key_val('shop', 'alcohol');
@@ -40,7 +52,7 @@ my $dbh = osm_queries::open_db();
 # key_val('shop', 'motorcycle');
 # key_val('shop', 'department_store');
 # key_val('shop', 'toys');
-# key_val('shop', 'stationary');
+# key_val('shop', 'stationery');
 # key_val('shop', 'interior_decoration');
 # key_val('shop', 'computer');
 # key_val('shop', 'hardware');
@@ -48,18 +60,18 @@ my $dbh = osm_queries::open_db();
 # key_val('shop', 'second_hand');
 # key_val('shop', 'hifi');
 # key_val('shop', 'outdoor');
-# key_val('shop', 'confectionary');
-# key_val('shop', 'wine');
+# key_val('shop', 'confectionery');
+# key_val('shop', 'wine');            # see also craft=winery
 # key_val('shop', 'dry_cleaning');
 # key_val('shop', 'laundry');
 # key_val('shop', 'pet');
 # key_val('shop', 'art');
 # key_val('shop', 'fashion');
-# key_val('shop', 'dairy');
+# key_val('shop', 'dairy');           # see also craft=cheese_making
 # key_val('shop', 'cheese');
 # key_val('shop', 'cosmetics');
-# key_val('shop', 'no');
-# key_val('shop', 'copyshop');
+# key_val('shop', 'no');              # Mostly gas stations
+  key_val('shop', 'copyshop');
 # key_val('shop', 'musical_instrument');
 # key_val('shop', 'ticket');
 # key_val('shop', 'photo');
@@ -68,8 +80,30 @@ my $dbh = osm_queries::open_db();
 #
 # key_val('amenity' , 'cafe' );
 # key_val('amenity' , 'fast_food' );
+# key_val('amenity' , 'pharmacy' );     # See also shop=chemist
 # key_val('tourism' , 'hotel');
 # key_val('takeaway', 'yes' );
+ 
+# key_val('craft', 'brewery' );
+# key_val('drink:wine', 'yes' ); # nur 8 Einträge
+# key_val('drink:beer', 'yes' ); # nur 3 Einträge
+# key_val('drinking_water', 'yes'            );   # See also amenity=drinking_water
+# key_val('amenity'       , 'drinking_water' );   # See also drinking_water=yes
+# key_val('craft'         , 'winery' );           # see also shop=wine
+# key_val('craft'         , 'cheese_making' );    # see also shop=diary
+# key_val('craft'         , 'carpenter' );
+# key_val('craft'         , 'electrician' );
+# key_val('craft'         , 'shoemaker' );
+# key_val('craft'         , 'brewery' );
+# key_val('craft'         , 'metal_construction' );
+# key_val('craft'         , 'gardener' );
+# key_val('craft'         , 'painter' );
+# key_val('craft'         , 'handicraft' );
+# key_val('craft'         , 'photographer' );
+# key_val('craft'         , 'beekeeper' );
+# key_val('craft'         , 'plumber' );
+# key_val('amenity'       , 'bar'    );
+# TODO: öffentliche Toiletten
 
 sub key_val { #_{
 
@@ -94,8 +128,7 @@ sub key_val { #_{
     tag              gt on tg.nod_id = gt.nod_id or
                            tg.way_id = gt.way_id or
                            tg.rel_id = gt.rel_id     left join
-    postcode_city_ch pc on gt.key = 'addr:postcode' and
-                           gt.val =    pc.postcode
+    postcode_city_ch pc on gt.key in ('addr:postcode', 'postcode', 'postal_code' ) and gt.val = pc.postcode
   where
   --tg.key = 'amenity' and tg.val = 'fuel'
     tg.key = '$key_'    and tg.val = '$val_'
@@ -151,25 +184,29 @@ sub emit_record { #_{
   print $html "\n<tr class='nextRow'>";
   print $html "<td>" . osm_queries::html_a_way_nod_id($val) . "</td>";
 
-  # if (exists $val->{'x:city'} and $val->{'addr:city'}) {
+# if (exists $val->{'x:city'} and $val->{'addr:city'}) {
 #     print  $val->{'x:city'} . '< - >' . $val->{'addr:city'} . "<\n" if
 #            $val->{'x:city'} ne $val->{'addr:city'};
 # }
 
+  my $name_used;
   print $html "<td><table>";
     if (defined $val->{name}) { #_{
       if (defined $val->{alt_name}) { #_{
         my $name     = $val->{name};
         my $alt_name = $val->{alt_name};
         if ($alt_name =~ /$name/i) {
+          $name_used = $alt_name;
           print $html "<tr><td>" . osm_queries::html_escape($alt_name) . "</td></tr>";
 #         print $html "<tr><td>1) alt_name: " . osm_queries::html_escape($alt_name) . "</td></tr>";
 #         print $html "<tr><td>1) name: "     . osm_queries::html_escape($name    ) . "</td></tr>";
         }
         elsif ($name =~ /$alt_name/i) {
+          $name_used = $name;
           print $html "<tr><td>" . osm_queries::html_escape($name) . "</td></tr>";
         }
         else {
+          $name_used = $name;
           print $html "<tr><td>" . osm_queries::html_escape($alt_name) . "<br>" .
                                    osm_queries::html_escape($name)     . "</td></tr>";
 #         print $html "<tr><td>2) alt_name: " . osm_queries::html_escape($alt_name) . "</td></tr>";
@@ -178,10 +215,12 @@ sub emit_record { #_{
 #       print $html "<tr><td>" . osm_queries::html_escape($val->{name    }) . "</td></tr>" if defined $val->{name};
       } #_}
       else {
+        $name_used = $val->{name};
         print $html "<tr><td>" . osm_queries::html_escape($val->{name    }) . "</td></tr>" if defined $val->{name};
       }
     } #_}
     if (defined $val->{'name_1'}) { #_{
+      $name_used = $val->{name};
       print $html "<tr><td>" . osm_queries::html_escape(delete $val->{name_1}) . "</td></tr>";
     } #_}
 #   else { #_{
@@ -193,6 +232,24 @@ sub emit_record { #_{
     } #_}
     print $html "<tr><td>" . osm_queries::html_escape($val->{operator}) . "</td></tr>" if defined $val->{operator} and $val->{operator} ne ($val->{name} // '?');
     print $html "<tr><td>" . osm_queries::html_escape($val->{brand   }) . "</td></tr>" if defined $val->{brand}    and $val->{brand}    ne ($val->{name} // '?') and $val->{brand} ne ($val->{operator} // '?');
+
+#   print $html "<tr><td>" . osm_queries::html_escape("name_used: $name_used") . "</td></tr>" if $name_used;
+
+
+    if ($name_used) { #_{
+      for my $name_XX (grep {$_ =~ /^name:/ } keys %$val) {
+#     for my $name_XX (keys %$val) {
+#       print "name_XX: $name_XX\n";
+#
+        if ($val->{$name_XX} ne $name_used) {
+          print $html "<tr><td>$name_XX: " .osm_queries::html_escape($val->{$name_XX}) . "</td></tr>";
+        }
+        delete $val->{$name_XX};
+
+      }
+    } #_}
+
+
   print $html "</table></td>";
 
   print $html "<td><table>";
@@ -230,6 +287,7 @@ sub emit_record { #_{
   print $html "<tr><td>" . osm_queries::html_escape($val->{'phone'         }) . "</td></tr>" if defined $val->{'phone'         };
   print $html "<tr><td>" . osm_queries::html_escape($val->{'contact:phone' }) . "</td></tr>" if defined $val->{'contact:phone' };
   print $html "<tr><td>" . osm_queries::html_escape($val->{'contact:mobile' }) . "</td></tr>" if defined $val->{'contact:mobile' };
+  print $html "<tr><td>" . osm_queries::html_escape($val->{'tel'           }) . "</td></tr>" if defined $val->{'tel' };
   print $html "<tr><td>" . osm_queries::html_escape(delete $val->{'phone:mobile'   }) . "</td></tr>" if defined $val->{'phone' };
   print $html "<tr><td>" . osm_queries::html_escape($val->{'mobile'         }) . "</td></tr>" if defined $val->{'mobile' };
 
@@ -243,6 +301,7 @@ sub emit_record { #_{
   print $html "<tr><td>" . osm_queries::html_website($val->{'website'         }) . "</td></tr>" if defined $val->{'website'};
   print $html "<tr><td>" . osm_queries::html_website($val->{'contact:website' }) . "</td></tr>" if defined $val->{'contact:website'};
   print $html "<tr><td>" . osm_queries::html_website($val->{'url'             }) . "</td></tr>" if defined $val->{'url'}; 
+  print $html "<tr><td>" . osm_queries::html_website($val->{'web'             }) . "</td></tr>" if defined $val->{'web'}; 
   print $html "<tr><td>" . osm_queries::html_website($val->{'contact:facebook'}) . "</td></tr>" if defined $val->{'contact:facebook'};
   print $html "<tr><td>" . osm_queries::html_website(delete $val->{'facebook' }) . "</td></tr>" if defined $val->{'facebook'};
 # print $html "<tr><td>" . osm_queries::html_escape($val->{'website'       })                                                              . "</td></tr>" if defined $val->{'website'       };
@@ -252,8 +311,17 @@ sub emit_record { #_{
   print $html "</table></td>";
 
   my $opening_hours = $val->{opening_hours} // '';
-  $opening_hours = osm_queries::html_escape($opening_hours);
-  $opening_hours =~ s/[;]/<br>/g;
+
+  if ($opening_hours) {
+    $opening_hours = osm_queries::html_escape($opening_hours);
+    $opening_hours =~ s/[;]/<br>/g;
+    $opening_hours =~ s/\bTu\b/Di/g;
+    $opening_hours =~ s/\bWe\b/Mi/g;
+    $opening_hours =~ s/\bTh\b/Do/g;
+    $opening_hours =~ s/\bSu\b/So/g;
+    $opening_hours =~ s/\boff\b/geschlossen/g;
+
+  }
   print $html "<td>" . $opening_hours . "</td>";
  
 
@@ -281,12 +349,14 @@ sub emit_record { #_{
   delete $val->{'contact:phone'};
   delete $val->{'mobile'};
   delete $val->{'contact:mobile'};
+  delete $val->{'tel'};
   delete $val->{'fax'};
   delete $val->{'contact:fax'};
   delete $val->{'website'};
   delete $val->{'contact:website'};
   delete $val->{'contact:facebook'};
   delete $val->{'url'};
+  delete $val->{'web'};
   delete $val->{'email'};
   delete $val->{'contact:email'};
   delete $val->{'opening_hours'};
@@ -332,6 +402,8 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'smoking:outside'         , 'yes'      , 'rauchen: draussen');
   print $html tr_td_if_key_val($val, 'smoking'                 , 'outside'  , 'rauchen: draussen');
   print $html tr_td_if_key_val($val, 'smoking'                 , 'separated', 'Fumoir');
+  print $html tr_td_if_key_val($val, 'payment:credit_cards'    , 'yes'      , 'akzeptiert Kreditkarten');
+  print $html tr_td_if_key_val($val, 'payment:credit_cards'    , 'no'       , 'keine Kreditkarten');
   print $html tr_td_if_key_val($val, 'payment:cash'            , 'yes'      , 'Bargeldbezahlung');
   print $html tr_td_if_key_val($val, 'payment:coins'           , 'yes'      , 'Münzbezahlung');
   print $html tr_td_if_key_val($val, 'payment:bitcoin'         , 'yes'      , 'Bitcoinbezahlung');
@@ -340,6 +412,8 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'payment:visa'            , 'yes'      , 'akzeptiert VISA');
   print $html tr_td_if_key_val($val, 'payment:mastercard'      , 'yes'      , 'akzeptiert Master Card');
   print $html tr_td_if_key_val($val, 'payment:american_express', 'yes'      , 'akzeptiert American Express');
+  print $html tr_td_if_key_val($val, 'payment:diners_club'     , 'yes'      , 'akzeptiert Diner\' Club');
+  print $html tr_td_if_key_val($val, 'atm'                     , 'no'       , 'kein ATM');
 
   print $html tr_td_if_key_val($val, 'amenity'            , 'cafe'         , 'Café');
   print $html tr_td_if_key_val($val, 'cafe'               , 'yes'          , 'Café');
@@ -362,6 +436,7 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'service:bicycle:repair'    , 'yes'                   , 'Veloreperatur');
   print $html tr_td_if_key_val($val, 'amenity'                   , 'bicycle_repair_station', 'Veloreperatur');
   print $html tr_td_if_key_val($val, 'service:bicycle:retail'    , 'yes'         , 'Veloverkauf');
+  print $html tr_td_if_key_val($val, 'service:bicycle:sales'     , 'yes'         , 'Veloverkauf');
   print $html tr_td_if_key_val($val, 'service:bicycle:pump'      , 'yes'         , 'Velos pumpen');
   print $html tr_td_if_key_val($val, 'service:bicycle:rental'    , 'yes'         , 'Velos mieten');
   print $html tr_td_if_key_val($val, 'amenity'                   , 'bicycle_rental', 'Velos mieten');
@@ -371,7 +446,16 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'service:bicycle:dealer'    , 'yes'         , 'Velohändler');
   print $html tr_td_if_key_val($val, 'service:bicycle:diy'       , 'yes'         , 'Velo do-it-yourself');
   print $html tr_td_if_key_val($val, 'service:bicycle:second_hand', 'yes'         , 'Occasionsvelos');
+  print $html tr_td_if_key_val($val, 'bicycle:clothes'            , 'yes'         , 'Velobekleidung');
   print $html tr_td_if_key_val($val, 'vending'                    , 'bicycle_tube', 'Veloschlauch-Verkauf');
+
+  print $html tr_td_if_key_val($val, 'motorcycle:sales'           , 'yes'         , 'Töffverkauf'     );
+  print $html tr_td_if_key_val($val, 'motorcycle:parts'           , 'yes'         , 'Toff-Ersatzteile');
+  print $html tr_td_if_key_val($val, 'motorcycle:repair'          , 'yes'         , 'Toffreparatur'   );
+  print $html tr_td_if_key_val($val, 'motorcycle:clothes'         , 'yes'         , 'Töffbekleidung'  );
+  print $html tr_td_if_key_val($val, 'motorcycle:rental'          , 'yes'         , 'Töffvermietung'  );
+
+  print $html tr_td_if_key_val($val, 'second_hand'                , 'yes'         , 'Occasionen');
 
   print $html tr_td_if_key_val($val, 'amenity'                    , 'solarium'    , 'Solarium');
 
