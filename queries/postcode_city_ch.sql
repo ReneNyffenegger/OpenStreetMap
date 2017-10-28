@@ -1,6 +1,5 @@
 begin transaction;
 
-drop   table postcode_city_ch;
 drop   table if exists postcode_city_ch;
 create table postcode_city_ch(
     postcode TEXT primary key,
