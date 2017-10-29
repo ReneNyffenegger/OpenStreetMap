@@ -110,30 +110,30 @@ my $dbh = osm_queries::open_db();
   key_val('craft'         , 'beekeeper' );
   key_val('craft'         , 'plumber' );
   key_val('amenity'       , 'bar'    );
-  ##### key_val('vending'       , 'yes'    );
+# key_val('vending'       , 'yes'    );
  
   key_val('natural'       , 'peak'    );
- ####   key_val('natural'       , 'scree'    ); # Hangschutt - wohl nur interessant in Google Earth
- #####  key_val('natural'       , 'glacier'  );                wohl nur interessant in Google Earth
+# key_val('natural'       , 'scree'    ); # Hangschutt - wohl nur interessant in Google Earth
+# key_val('natural'       , 'glacier'  );                wohl nur interessant in Google Earth
   key_val('natural'       , 'beach'  );     # see also sport=swimming
   key_val('natural'       , 'stone'  );
   key_val('natural'       , 'rock'  );
   key_val('natural'       , 'cave_entrance'  );
- ####  key_val('natural'       , 'ridge'  );  # google earth
+# key_val('natural'       , 'ridge'  );  # google earth
   key_val('natural'       , 'spring'  );  # see also drinking_water=yes
-  key_val('natural'       , 'ridge'  );   #    google earth?
-  key_val('natural'       , 'heath'  );   #    google earth
-  key_val('natural'       , 'valley'  );  #    google earth
-  key_val('natural'       , 'crevasse'  ); #   google earth
-  key_val('natural'       , 'sinkhole'  ); #   google earth
+# key_val('natural'       , 'ridge'  );   #    google earth?
+# key_val('natural'       , 'heath'  );   #    google earth
+# key_val('natural'       , 'valley'  );  #    google earth
+# key_val('natural'       , 'crevasse'  ); #   google earth
+# key_val('natural'       , 'sinkhole'  ); #   google earth
   key_val('natural'       , 'waterfall'  );
  
   key_val('amenity'       , 'toilets'  );
  
   key_val('man_made'      , 'pier'  );
-  key_val('man_made'      , 'silo'  );         # google earth
+# key_val('man_made'      , 'silo'  );         # google earth
   key_val('man_made'      , 'storage_tank'  );
-  key_val('man_made'      , 'avalanche_protection'  ); # google earth
+# key_val('man_made'      , 'avalanche_protection'  ); # google earth
   key_val('man_made'      , 'tower'  );
   key_val('man_made'      , 'surveillance'  );  # Überwachungskameras?
   key_val('man_made'      , 'water_well'  );
@@ -141,14 +141,14 @@ my $dbh = osm_queries::open_db();
   key_val('man_made'      , 'wastewater_plant'  );
   key_val('man_made'      , 'reservoir_covered'  );
   key_val('man_made'      , 'pipeline'  );
-  key_val('man_made'      , 'snow_fence'  );     # google earth
+# key_val('man_made'      , 'snow_fence'  );     # google earth
   key_val('man_made'      , 'bridge'  );
   key_val('man_made'      , 'mast'  );
   key_val('man_made'      , 'survey_point'  );
   key_val('man_made'      , 'street_cabinet'  );
   key_val('man_made'      , 'breakwater'  );      # google earth
   key_val('man_made'      , 'flagpole'  );
-  key_val('man_made'      , 'snow_cannon'  ); # google earth
+# key_val('man_made'      , 'snow_cannon'  ); # google earth
   key_val('man_made'      , 'cross'  );
   key_val('man_made'      , 'water_works'  );
   key_val('man_made'      , 'chimney'  );
@@ -156,7 +156,7 @@ my $dbh = osm_queries::open_db();
   key_val('man_made'      , 'monitoring_station'  );
   key_val('man_made'      , 'beacon'  );
   key_val('man_made'      , 'telescope'  );
-  key_val('man_made'      , 'groyne'  );  # google earth
+# key_val('man_made'      , 'groyne'  );  # google earth
   key_val('man_made'      , 'lamp'  );
   key_val('man_made'      , 'yes'  );
   key_val('man_made'      , 'gasometer'  );
@@ -301,7 +301,14 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-  my $html = osm_queries::start_html("$key_-$val_", "key = $key_ / val = $val_", "key = $key_ / val = $val_");
+ (my $key_html_page = $key_) =~ s/:/_/g;
+ (my $val_html_page = $val_) =~ s/:/_/g;
+
+  my $html_name_without_html = "$key_html_page-$val_html_page";
+  print "<a href='$html_name_without_html.html'>$key_ = $val_</a><br>\n";
+  return;
+
+  my $html = osm_queries::start_html("key-val/$html_name_without_html", "Open Street Map key-val Paar $key_ = $val_", "Abfrage für <code>$key_ = $val_</code> im Schweizer Open Street Map Dataset.");
   
   my $sql_stmt = "
   select

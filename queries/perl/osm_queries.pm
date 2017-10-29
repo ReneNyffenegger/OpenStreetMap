@@ -141,7 +141,7 @@ sub end_html { #_{
 
   print $html qq{
   <hr>
-    <a href='http://renenyffenegger.ch/development/OpenStreetMap/queries'>Weitere Open Street Map queries</a>.
+    <a href='http://renenyffenegger.ch/development/OpenStreetMap/queries/key-val'>Weitere key-val Open Street Map queries</a>
   </body>
 </html>};
   close $html;
