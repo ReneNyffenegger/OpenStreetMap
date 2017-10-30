@@ -1,0 +1,21 @@
+sankt Peterzell
+contact:facebook: https://www.facebook.com/www.derfrisoer.chl
+Neuchatel
+  (<-- Ohne a caret)
+
+Node 3250050361: Hitl statt Hiltl
+
+Bergün / Bravuogn
+  (statt Bergün/Bravuogn)
+
+postcode -> addr:postcode
+  
+Telephon:
+  027.306.45.19
+  027.722.32.46
+
+is_in -> addr:city
+
+postal_code  -> addr:postcode
+
+site:http://* -> addr:website oder so
