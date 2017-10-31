@@ -90,6 +90,7 @@ my $dbh = osm_queries::open_db();
   key_val('amenity' , 'fast_food' );
   key_val('amenity' , 'pharmacy' );     # See also shop=chemist
   key_val('takeaway', 'yes' );
+  key_val('amenity', 'post_office' );
  
   key_val('craft', 'brewery' );
   key_val('drink:wine', 'yes' ); # nur 8 Einträge
