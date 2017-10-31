@@ -18,7 +18,10 @@ my $test = '_TEST';
 # my $sth = $dbh->prepare("select * from tag where val like '\%Neuchatel\%'");
 
 $dbh -> do('pragma case_sensitive_like = false');
-my $sth = $dbh->prepare("select * from tag where key in ('phone', 'contact:phone', 'contact:fax', 'fax', 'contact:mobile') and val not regexp '^\\+\\d\\d \\d\\d \\d\\d\\d \\d\\d \\d\\d'");
+
+
+#my $sth = $dbh->prepare("select * from tag where key in ('phone', 'contact:phone', 'contact:fax', 'fax', 'contact:mobile') and val regexp '^\\+\\d\\d \\d\\d \\d\\d\\d\\d\\d\\d\\d *\$'");
+ my $sth = $dbh->prepare("select * from tag where key in ('phone', 'contact:phone', 'contact:fax', 'fax', 'contact:mobile') and val regexp '^\\+\\d\\d \\d\\d\\d \\d\\d\\d \\d\\d\\d *\$'");
 $sth -> execute;
 while (my $r = $sth -> fetchrow_hashref()) {
 
@@ -45,12 +48,22 @@ while (my $r = $sth -> fetchrow_hashref()) {
 
   my $val_new = $r->{val};
 
-  if ($val_new =~ s/\bNeuchatel\b/Neuchâtel/g) {
-    set_tag($id, $primitive, $r->{key}, $r->{val}, $val_new);
-  }
-  else {
-    print "No change in $val_new\n";
-  }
+  print $r->{val}, "\n";
+
+# if ($val_new =~ s/^(\+\d\d \d\d) (\d\d\d)(\d\d)(\d\d) *$/$1 $2 $3 $4/) {
+# if ($val_new =~ s/^(\+\d\d \d\d)(\d) (\d\d\d)(\d\d\d) *$/$1 $2 $3 $4/) {
+#   print "$r->{val} -> $val_new\n";
+# }
+# else {
+#   die "unexpected!";
+# }
+
+# if ($val_new =~ s/\bNeuchatel\b/Neuchâtel/g) {
+#   set_tag($id, $primitive, $r->{key}, $r->{val}, $val_new);
+# }
+# else {
+#   print "No change in $val_new\n";
+# }
 
 #print "$primitive $id $r->{val}\n";
 }
