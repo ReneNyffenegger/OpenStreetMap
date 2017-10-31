@@ -1,4 +1,12 @@
 #!/usr/bin/perl
+#
+#
+#
+#                   http://wiki.openstreetmap.org/wiki/Category:Automated_edits_log
+#                   https://www.youtube.com/watch?v=ZrvcVAPdaWI (Mechanical Edits in OpenStreetMap)
+#                   http://wiki.openstreetmap.org/wiki/Talk:Automated_edits
+#
+#
 use warnings;
 use strict;
 use utf8;
