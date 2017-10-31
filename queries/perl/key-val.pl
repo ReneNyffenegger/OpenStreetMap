@@ -302,12 +302,13 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
+  return unless $key_ eq 'amenity' and $val_ eq 'post_office';
+
  (my $key_html_page = $key_) =~ s/:/_/g;
  (my $val_html_page = $val_) =~ s/:/_/g;
 
   my $html_name_without_html = "$key_html_page-$val_html_page";
   print "<a href='$html_name_without_html.html'>$key_ = $val_</a><br>\n";
-  return;
 
   my $html = osm_queries::start_html("key-val/$html_name_without_html", "Open Street Map key-val Paar $key_ = $val_", "Abfrage für <code>$key_ = $val_</code> im Schweizer Open Street Map Dataset.");
   
@@ -619,6 +620,9 @@ sub emit_record { #_{
     print $html "<tr><td>" . osm_queries::html_escape("Rollstuhlinformation: $wheelchair_description") . "</td></tr>";
   }
 
+  if (my $collection_times = delete $val->{collection_times}) {
+    print $html "<tr><td>Leerungszeit: " . osm_queries::html_escape($collection_times) . "</td></tr>";
+  }
 
   print $html tr_td_if_key_val($val, 'tower:type'              , 'observation' , 'Aussichtsturm');
   print $html tr_td_if_key_val($val, 'tower:type'              , 'communication' , 'Kommunikationsturm');
