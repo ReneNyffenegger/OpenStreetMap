@@ -182,7 +182,7 @@ my $dbh = osm_queries::open_db();
   key_val('sport'         , 'skiing'  );
   key_val('sport'         , 'scuba_diving'  );
   key_val('sport'         , 'beachvolleyball'  );
-  key_val('sport'         , 'climbing'  );
+  key_val('sport'         , 'climbing'         ); # See also: climbing:sport
   key_val('sport'         , 'golf'  );
   key_val('sport'         , 'gymnastics'  );
   key_val('sport'         , 'running'  );
@@ -288,6 +288,17 @@ my $dbh = osm_queries::open_db();
  
   key_val('storage'  , 'oil');
   key_val('site'     , 'geodesic');
+
+  key_val('electric_car', 'yes');
+  key_val('mooring', 'yes');
+  key_val('surveillance:zone', 'traffic'); # see also man_made: surveillance
+  key_val('surveillance:zone', 'town');
+  key_val('surveillance:zone', 'building');
+  key_val('surveillance:zone', 'parking');
+  key_val('heritage'         , '*');
+  key_val('embankment'       , 'yes');
+  key_val('mountain_pass'    , 'yes');
+  key_val('payment:bitcoin'  , 'yes'); # see also: currency:XBT=yes
 #
 #      centralkey: eurokey
 #
@@ -302,15 +313,32 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-  return unless $key_ eq 'amenity' and $val_ eq 'post_office';
+# return unless $key_ eq 'electric_car' and $val_ eq 'yes';
+# return unless $key_ eq 'mooring' and $val_ eq 'yes';
+# return unless $key_ eq 'surveillance:zone';
+# return unless $key_ eq 'heritage';
+# return unless $key_ eq 'embankment';
+# return unless $key_ eq 'mountain_pass';
+  return unless $key_ eq 'payment:bitcoin';  
 
  (my $key_html_page = $key_) =~ s/:/_/g;
- (my $val_html_page = $val_) =~ s/:/_/g;
+  my $val_html_page;
+  if ($val_ eq '*') {
+     $val_html_page = '_any_';
+  }
+  else {
+    ($val_html_page = $val_) =~ s/:/_/g;
+  }
 
   my $html_name_without_html = "$key_html_page-$val_html_page";
   print "<a href='$html_name_without_html.html'>$key_ = $val_</a><br>\n";
 
   my $html = osm_queries::start_html("key-val/$html_name_without_html", "Open Street Map key-val Paar $key_ = $val_", "Abfrage für <code>$key_ = $val_</code> im Schweizer Open Street Map Dataset.");
+
+  my $where_val ='';
+  if ($val_ ne '*') {
+     $where_val = " and tg.val = '$val_'";
+  }
   
   my $sql_stmt = "
   select
@@ -330,9 +358,8 @@ sub key_val { #_{
                            tg.rel_id = gt.rel_id     left join
     postcode_city_ch pc on gt.key in ('addr:postcode', 'postcode', 'postal_code' ) and gt.val = pc.postcode
   where
-  --tg.key = 'amenity' and tg.val = 'fuel'
-    tg.key = '$key_'    and tg.val = '$val_'
-  --tg.val = 'parking'
+  --tg.key = '$key_'    and tg.val = '$val_'
+    tg.key = '$key_'    $where_val
   order by
     tg.rel_id,
     tg.way_id,
@@ -509,6 +536,7 @@ sub emit_record { #_{
   print $html "<tr><td>" . osm_queries::html_website($val->{'url'             }) . "</td></tr>" if defined $val->{'url'}; 
   print $html "<tr><td>" . osm_queries::html_website($val->{'web'             }) . "</td></tr>" if defined $val->{'web'}; 
   print $html "<tr><td>" . osm_queries::html_website($val->{'contact:facebook'}) . "</td></tr>" if defined $val->{'contact:facebook'};
+  print $html "<tr><td>" . osm_queries::html_website(delete $val->{'website_1'}) . "</td></tr>" if defined $val->{'website_1'};
   print $html "<tr><td>" . osm_queries::html_website(delete $val->{'facebook' }) . "</td></tr>" if defined $val->{'facebook'};
 
   if (my $wikipedia = delete $val->{wikipedia}) {
@@ -556,7 +584,9 @@ sub emit_record { #_{
   delete $val->{way_id};
   delete $val->{rel_id};
 
-  delete $val->{$key_};
+  if ($val_ ne '*') {
+    delete $val->{$key_};
+  }
   delete $val->{source};
   delete $val->{created_by};
 
@@ -597,6 +627,17 @@ sub emit_record { #_{
 
 
   print $html "<td><table>";
+
+  if (my $image = delete $val->{image}) {
+
+    if ($image =~ m!^https?://!) {
+       print $html "<tr><td><a href='$image'>image</a></td></tr>";
+    }
+    else {
+       print $html "<tr><td>image: $image</td></tr>";
+    }
+
+  }
 
   print $html tr_td_if_key_val($val, 'fee'                     , 'yes'      , 'kostenpflichtig');
   print $html tr_td_if_key_val($val, 'fee'                     , 'no'       , 'kostenlos');
@@ -782,7 +823,7 @@ sub emit_record { #_{
     print $html "<tr><td>$beds Betten</td</tr>";
   }
 
-  if (my $cuisine = delete $val->{cuisine}) {
+  if (my $cuisine = delete $val->{cuisine}) { #_{
        if ($cuisine eq 'german'       ) { print $html "<tr><td>deutsche Küche</td</tr>" }
     elsif ($cuisine eq 'italian'      ) { print $html "<tr><td>italienische Küche</td</tr>" }
     elsif ($cuisine eq 'thai'         ) { print $html "<tr><td>thailändische Küche</td</tr>" }
@@ -812,11 +853,14 @@ sub emit_record { #_{
     elsif ($cuisine eq 'seasonal'     ) { print $html "<tr><td>saisonale Küche</td</tr>" }
     elsif ($cuisine eq 'coffee_shop'  ) { print $html "<tr><td>Kaffeehaus</td</tr>" }
     else                                { print $html "<tr><td>$cuisine cuisine</td</tr>" }
-  }
+  } #_}
 
-  if (exists $val->{ele}) {
+  if (exists $val->{ele}) { #_{
     printf $html "<tr><td>%d M.ü.M</td></tr>", int(delete $val->{ele});
-  }
+  } #_}
+  if (my $voltage = delete $val->{voltage}) { #_{
+    print $html "<tr><td>$voltage Volt</td></tr>";
+  } #_}
 
 
   for my $key (keys %$val) {
