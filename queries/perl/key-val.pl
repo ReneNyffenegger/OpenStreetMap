@@ -179,7 +179,7 @@ my $dbh = osm_queries::open_db();
   key_val('sport'         , 'athletics'  );
   key_val('sport'         , 'equestrian'  );
   key_val('sport'         , 'table_tennis'  );
-  key_val('sport'         , 'skiing'  );
+  key_val('sport'         , 'skiing'  );          # See also ski=yes
   key_val('sport'         , 'scuba_diving'  );
   key_val('sport'         , 'beachvolleyball'  );
   key_val('sport'         , 'climbing'         ); # See also: climbing:sport
@@ -299,6 +299,22 @@ my $dbh = osm_queries::open_db();
   key_val('embankment'       , 'yes');
   key_val('mountain_pass'    , 'yes');
   key_val('payment:bitcoin'  , 'yes'); # see also: currency:XBT=yes
+  key_val('ski'  , 'yes'); # see also: currency:XBT=yes
+  key_val('ski'  , 'Cross-country');
+  key_val('design'  , 'barrel');
+  key_val('location'  , 'overground');
+  key_val('location'  , 'underground');
+  key_val('location'  , 'indoor');
+  key_val('location'  , 'outdoor');
+  key_val('location'  , 'lakeside');
+  key_val('location'  , 'underwater');
+  key_val('amenity', 'restaurant' );
+  key_val('shelter_type', 'public_transport' );
+  key_val('shelter_type', 'picnic_shelter' );
+  key_val('shelter_type', 'wheather_shelter' );
+  key_val('shelter_type', 'basic_hut' );
+  key_val('shelter_type', 'rock_shelter' );
+  key_val('diet:vegetarian', 'yes' );
 #
 #      centralkey: eurokey
 #
@@ -319,7 +335,11 @@ sub key_val { #_{
 # return unless $key_ eq 'heritage';
 # return unless $key_ eq 'embankment';
 # return unless $key_ eq 'mountain_pass';
-  return unless $key_ eq 'payment:bitcoin';  
+# return unless $key_ eq 'payment:bitcoin';  
+# return unless $key_ eq 'ski';  
+# return unless $key_ eq 'design';  
+# return unless $key_ eq 'location';  
+  return unless $key_ eq 'amenity' and $val_ eq 'restaurant';
 
  (my $key_html_page = $key_) =~ s/:/_/g;
   my $val_html_page;
@@ -647,6 +667,7 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'access'                  , 'private'   , 'nicht öffentlich');
 
   print $html tr_td_if_key_val($val, 'takeaway'                , 'yes'      , 'Take-Away');
+  print $html tr_td_if_key_val($val, 'takeaway'                , 'no'       , 'kein Take-Away');
   print $html tr_td_if_key_val($val, 'delivery'                , 'yes'      , 'Zustelldienst');
   print $html tr_td_if_key_val($val, 'delivery'                , 'no'       , 'kein Zustelldienst');
   print $html tr_td_if_key_val($val, 'delivery'                , 'only'     , 'nur mit Zustelldienst');
@@ -794,6 +815,8 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'surface'              , 'asphalt', 'Asphaltplatz');
   print $html tr_td_if_key_val($val, 'surface'              , 'tartan', 'Tartan- od. Kunststoffbelag');
 
+  print $html tr_td_if_key_val($val, 'tourism'              , 'hotel'  , 'Hotel');
+  print $html tr_td_if_key_val($val, 'tourism'              , 'alpine_hut'  , 'Alphütte');
   print $html tr_td_if_key_val($val, 'tourism'              , 'attraction'  , 'touristische Attraktion');
   print $html tr_td_if_key_val($val, 'tourism'              , 'museum'  , 'Museum');
   print $html tr_td_if_key_val($val, 'historic'             , 'archaeological_site', 'historische Stätte');
@@ -852,6 +875,9 @@ sub emit_record { #_{
     elsif ($cuisine eq 'chicken'      ) { print $html "<tr><td>Poulets</td</tr>" }
     elsif ($cuisine eq 'seasonal'     ) { print $html "<tr><td>saisonale Küche</td</tr>" }
     elsif ($cuisine eq 'coffee_shop'  ) { print $html "<tr><td>Kaffeehaus</td</tr>" }
+    elsif ($cuisine eq 'korean'       ) { print $html "<tr><td>koreanische</td</tr>" }
+    elsif ($cuisine eq 'fish'         ) { print $html "<tr><td>Fischspezialitäten</td</tr>" }
+    elsif ($cuisine eq 'mediterranean'         ) { print $html "<tr><td>mediterrane Küche</td</tr>" }
     else                                { print $html "<tr><td>$cuisine cuisine</td</tr>" }
   } #_}
 
