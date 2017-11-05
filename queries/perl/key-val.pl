@@ -282,6 +282,8 @@ my $dbh = osm_queries::open_db();
   key_val('military'  , 'range');
   key_val('military'  , 'barracks');
   key_val('military'  , 'danger_area');
+
+  key_val('microbrewery'  , 'yes');
  
   key_val('amenity'  , 'bank');
   key_val('amenity'  , 'public_building');
@@ -300,7 +302,7 @@ my $dbh = osm_queries::open_db();
   key_val('mountain_pass'    , 'yes');
   key_val('payment:bitcoin'  , 'yes'); # see also: currency:XBT=yes
   key_val('ski'  , 'yes'); # see also: currency:XBT=yes
-  key_val('ski'  , 'Cross-country');
+  key_val('ski'  , 'cross-country');
   key_val('design'  , 'barrel');
   key_val('location'  , 'overground');
   key_val('location'  , 'underground');
@@ -315,6 +317,13 @@ my $dbh = osm_queries::open_db();
   key_val('shelter_type', 'basic_hut' );
   key_val('shelter_type', 'rock_shelter' );
   key_val('diet:vegetarian', 'yes' );
+
+  key_val('funicular', 'yes' );
+  key_val('motorboat', 'yes' );
+  key_val('taxi', 'yes' );
+  key_val('tourist_bus', 'yes' );
+  key_val('route', 'shuttle_train' );
+  key_val('toilets', 'yes' );
 #
 #      centralkey: eurokey
 #
@@ -329,17 +338,8 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-# return unless $key_ eq 'electric_car' and $val_ eq 'yes';
-# return unless $key_ eq 'mooring' and $val_ eq 'yes';
-# return unless $key_ eq 'surveillance:zone';
-# return unless $key_ eq 'heritage';
-# return unless $key_ eq 'embankment';
-# return unless $key_ eq 'mountain_pass';
-# return unless $key_ eq 'payment:bitcoin';  
-# return unless $key_ eq 'ski';  
-# return unless $key_ eq 'design';  
-# return unless $key_ eq 'location';  
-  return unless $key_ eq 'amenity' and $val_ eq 'restaurant';
+  return unless 
+        $key_ eq  'toilets';
 
  (my $key_html_page = $key_) =~ s/:/_/g;
   my $val_html_page;
@@ -594,7 +594,9 @@ sub emit_record { #_{
     $opening_hours =~ s/\bWe\b/Mi/g;
     $opening_hours =~ s/\bTh\b/Do/g;
     $opening_hours =~ s/\bSu\b/So/g;
+    $opening_hours =~ s/\bPH\b/Feiertage/g;
     $opening_hours =~ s/\boff\b/geschlossen/g;
+    $opening_hours =~ s/\bclosed\b/geschlossen/g;
 
   }
   print $html "<td>" . $opening_hours . "</td>";
@@ -746,6 +748,7 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'atm'                     , 'no'       , 'kein ATM');
 
   print $html tr_td_if_key_val($val, 'amenity'            , 'cafe'         , 'Café');
+  print $html tr_td_if_key_val($val, 'amenity'            , 'pub'          , 'Pub');
   print $html tr_td_if_key_val($val, 'cafe'               , 'yes'          , 'Café');
   print $html tr_td_if_key_val($val, 'amenity'            , 'restaurant'   , 'Restaurant');
   print $html tr_td_if_key_val($val, 'amenity'            , 'fast_food'    , 'Fast-Food');
