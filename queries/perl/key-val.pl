@@ -349,9 +349,29 @@ my $dbh = osm_queries::open_db();
   key_val('emergency', 'phone');
   key_val('emergency', 'fire_hydrant');
 
-  key_val('office', 'ngo'    );
+  key_val('office', 'architect');
+  key_val('office', 'accountant'    );
+  key_val('office', 'administrative');
+  key_val('office', 'association'    );
+  key_val('office', 'company');
+  key_val('office', 'consulting'    );
+  key_val('office', 'educational_institution');
+  key_val('office', 'estate_agent');
+  key_val('office', 'government');
+  key_val('office', 'it');
+  key_val('office', 'insurance');
+  key_val('office', 'lawyer');
+  key_val('office', 'newspaper'    );
+  key_val('office', 'ngo');
+  key_val('office', 'physician');
+  key_val('office', 'research'    );
+  key_val('office', 'therapist');
+  key_val('office', 'travel_agent');
+  key_val('office', 'yes');
+
   key_val('amenity', 'fire_station'    ); # see also emergency=ambulance_station
   key_val('amenity' , 'hospital'     );
+  key_val('amenity' , 'police'     );
   key_val('memorial', '*'     ); # see also historic=memorial
   key_val('hazard', 'shooting_range'     ); 
 #
@@ -368,11 +388,9 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-# return unless $key_ eq  'ferry';
 # return unless $val_ eq  'ferry_terminal';
 # return unless $key_ eq  'social_facility';
 # return unless $key_ eq  'amenity' and $val_ eq 'social_facility';
-# return unless $key_ eq  'emergency';
 # return unless $key_ eq  'memorial';
   return unless $key_ eq  'hazard';
 
