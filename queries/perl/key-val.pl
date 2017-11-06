@@ -232,7 +232,7 @@ my $dbh = osm_queries::open_db();
   key_val('historic' , 'wayside_cross');
   key_val('historic' , 'ruins');
   key_val('historic' , 'castle');
-  key_val('historic' , 'memorial');
+  key_val('historic' , 'memorial'); # see also memorial=*
   key_val('historic' , 'wayside_shrine');
   key_val('historic' , 'boundary_stone');
   key_val('historic' , 'archaeological_site');
@@ -324,6 +324,36 @@ my $dbh = osm_queries::open_db();
   key_val('tourist_bus', 'yes' );
   key_val('route', 'shuttle_train' );
   key_val('toilets', 'yes' );
+
+  key_val('ferry'  , 'yes'            ); # See also amenity=ferry_terminal
+  key_val('amenity', 'ferry_terminal' ); # See also ferry=yes
+  key_val('social_facility', 'group_home'      ); # See also amenity=social_facility
+  key_val('social_facility', 'assisted_living' );
+  key_val('social_facility', 'nursing_home'    );
+
+  key_val('amenity', 'social_facility'    );
+
+
+  key_val('emergency', 'ambulance_station'); # see also amenity=fire_station
+  key_val('emergency', 'suction_point');
+  key_val('emergency', 'fire_detection_system');
+#?key_val('emergency', 'life_ring');
+#?key_val('emergency', 'assembly_point');
+#?key_val('emergency', 'key_depot');
+# key_val('emergency', 'no');
+  key_val('emergency', 'water_tank');
+  key_val('emergency', 'siren');
+  key_val('emergency', 'fire_water_pond');
+  key_val('emergency', 'yes');
+  key_val('emergency', 'defibrillator');
+  key_val('emergency', 'phone');
+  key_val('emergency', 'fire_hydrant');
+
+  key_val('office', 'ngo'    );
+  key_val('amenity', 'fire_station'    ); # see also emergency=ambulance_station
+  key_val('amenity' , 'hospital'     );
+  key_val('memorial', '*'     ); # see also historic=memorial
+  key_val('hazard', 'shooting_range'     ); 
 #
 #      centralkey: eurokey
 #
@@ -338,8 +368,13 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-  return unless 
-        $key_ eq  'toilets';
+# return unless $key_ eq  'ferry';
+# return unless $val_ eq  'ferry_terminal';
+# return unless $key_ eq  'social_facility';
+# return unless $key_ eq  'amenity' and $val_ eq 'social_facility';
+# return unless $key_ eq  'emergency';
+# return unless $key_ eq  'memorial';
+  return unless $key_ eq  'hazard';
 
  (my $key_html_page = $key_) =~ s/:/_/g;
   my $val_html_page;
@@ -397,7 +432,7 @@ sub key_val { #_{
     if ($last_id_ ne $r->{id_ }) {
       emit_record($key_, $val_, \%val, $html) if $last_id_;
       %val = ();
-      $last_id_ = $r->{id_};
+      $last_id_ = $r->{id_ };
       $val{nod_id} = $r->{nod_id};
       $val{way_id} = $r->{way_id};
       $val{rel_id} = $r->{rel_id};
@@ -830,6 +865,7 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'drinkable'            , 'no', 'kein Trinkwasser');
   print $html tr_td_if_key_val($val, 'drinking_water'       , 'no', 'kein Trinkwasser');
   print $html tr_td_if_key_val($val, 'potable'              , 'yes', 'Trinkwasser');
+  print $html tr_td_if_key_val($val, 'social_facility:for'  , 'senior', 'Altersheim');
 
   my $stars;
   if ($stars = delete $val->{stars} or $stars = delete $val->{'stars:hotel'}) {
