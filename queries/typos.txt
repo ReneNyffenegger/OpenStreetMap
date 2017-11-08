@@ -5,6 +5,13 @@ Neuchatel
 
 Node 3250050361: Hitl statt Hiltl
 
+elevation -> ele
+
+landuse=grave_yard vs landuse=graveyard ---> cemetery
+landuse=obervatory -> landuse=observatory
+
+demolished_building -> demolished:buidling
+
 Bergün / Bravuogn
   (statt Bergün/Bravuogn)
 

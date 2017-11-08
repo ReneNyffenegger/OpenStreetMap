@@ -374,6 +374,46 @@ my $dbh = osm_queries::open_db();
   key_val('amenity' , 'police'     );
   key_val('memorial', '*'     ); # see also historic=memorial
   key_val('hazard', 'shooting_range'     ); 
+
+  key_val('ship', 'yes'     );  # Offenbar bezeichnet ship=yes eine Befahrbarkeit durch Schiffe an.
+  key_val('island', 'yes'     ); 
+  key_val('waste_basket', 'yes'     ); 
+  key_val('healthcare:speciality', '*'     ); 
+  key_val('healthcare', '*'     ); 
+  key_val('plant', '*'     ); 
+
+  key_val('landuse', 'garden');
+  key_val('landuse', 'traffic_island');
+  key_val('landuse', 'conservation');
+  key_val('landuse', 'yes');
+  key_val('landuse', 'greenfield');
+  key_val('landuse', 'garages');
+  key_val('landuse', 'piste');
+  key_val('landuse', 'brownfield');
+  key_val('landuse', 'landfill');
+  key_val('landuse', 'village_green');
+  key_val('landuse', 'retail');
+  key_val('landuse', 'recreation_ground');
+  key_val('landuse', 'plant_nursery');
+  key_val('landuse', 'military');
+  key_val('landuse', 'greenhouse_horticulture');
+  key_val('landuse', 'reservoir');
+  key_val('landuse', 'railway');
+  key_val('landuse', 'quarry');
+  key_val('landuse', 'commercial');
+  key_val('landuse', 'construction');
+  key_val('landuse', 'basin');
+  key_val('landuse', 'cemetery');  # s.a. amenity=grave_yard
+
+  key_val('amenity', 'grave_yard'); # s.a . landuse = cemetery
+  key_val('resource', '*');
+
+  key_val('wpt_symbol', '*');
+  key_val('demolished:building', '*');
+  key_val('castle_type', '*');
+  key_val('crop', '*');
+
+
 #
 #      centralkey: eurokey
 #
@@ -388,11 +428,19 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-# return unless $val_ eq  'ferry_terminal';
-# return unless $key_ eq  'social_facility';
-# return unless $key_ eq  'amenity' and $val_ eq 'social_facility';
-# return unless $key_ eq  'memorial';
-  return unless $key_ eq  'hazard';
+# return unless $key_ eq  'ship';
+# return unless $key_ eq  'island';
+# return unless $key_ eq  'waste_basket';
+# return unless $key_ eq  'healthcare:speciality';
+# return unless $key_ eq  'healthcare';
+# return unless $key_ eq  'plant';
+# return unless $key_ eq  'landuse';
+# return unless $key_ eq  'amenity' and $val_ eq 'grave_yard';
+# return unless $key_ eq  'resource';
+# return unless $key_ eq  'wpt_symbol';
+# return unless $key_ eq  'demolished:building';
+# return unless $key_ eq  'castle_type';
+  return unless $key_ eq  'crop';
 
  (my $key_html_page = $key_) =~ s/:/_/g;
   my $val_html_page;
@@ -552,9 +600,9 @@ sub emit_record { #_{
       }
     } #_}
 
-    if (my $description = delete $val->{description}) {
+    if (my $description = delete $val->{description}) { #_{
         print $html "<tr><td><i>" . osm_queries::html_escape($description) . "</i></td></tr>";
-    }
+    } #_}
 
   print $html "</table></td>";
 
@@ -570,7 +618,7 @@ sub emit_record { #_{
 # print $html "<tr><td>" . osm_queries::html_escape($val->{'addr:postcode' }) . ' ' . osm_queries::html_escape($val->{'addr:city'       }) . "</td></tr>" if defined $val->{'addr:city'     };
 
   my $floor;
-  if ($floor = delete $val->{'floor'} or $floor = delete $val->{'addr:floor'} or $floor = delete $val->{level} or $floor = delete $val->{layer}) {
+  if ($floor = delete $val->{'floor'} or $floor = delete $val->{'addr:floor'} or $floor = delete $val->{level} or $floor = delete $val->{layer}) { #_{
      if ($floor eq '0') {
        print $html "<tr><td>Erdgeschoss</td></tr>"
      }
@@ -588,7 +636,7 @@ sub emit_record { #_{
        $floor =~ s/;/ und /;
        print $html "<tr><td>Etagen $floor</td></tr>";
      }
-  }
+  } #_}
 
   print $html "<tr><td>" . osm_queries::html_escape($val->{'phone'         }) . "</td></tr>" if defined $val->{'phone'         };
   print $html "<tr><td>" . osm_queries::html_escape($val->{'contact:phone' }) . "</td></tr>" if defined $val->{'contact:phone' };
