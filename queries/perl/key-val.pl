@@ -428,19 +428,19 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-# return unless $key_ eq  'ship';
-# return unless $key_ eq  'island';
-# return unless $key_ eq  'waste_basket';
-# return unless $key_ eq  'healthcare:speciality';
-# return unless $key_ eq  'healthcare';
-# return unless $key_ eq  'plant';
-# return unless $key_ eq  'landuse';
-# return unless $key_ eq  'amenity' and $val_ eq 'grave_yard';
-# return unless $key_ eq  'resource';
-# return unless $key_ eq  'wpt_symbol';
-# return unless $key_ eq  'demolished:building';
-# return unless $key_ eq  'castle_type';
-  return unless $key_ eq  'crop';
+  return unless $key_ eq  'ship'
+    or          $key_ eq  'island'
+    or          $key_ eq  'waste_basket'
+    or          $key_ eq  'healthcare:speciality'
+    or          $key_ eq  'healthcare'
+    or          $key_ eq  'plant'
+    or          $key_ eq  'landuse'
+    or         ($key_ eq  'amenity' and $val_ eq 'grave_yard')
+    or          $key_ eq  'resource'
+    or          $key_ eq  'wpt_symbol'
+    or          $key_ eq  'demolished:building'
+    or          $key_ eq  'castle_type'
+    or          $key_ eq  'crop';
 
  (my $key_html_page = $key_) =~ s/:/_/g;
   my $val_html_page;
