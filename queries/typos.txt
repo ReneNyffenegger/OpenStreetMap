@@ -26,3 +26,7 @@ is_in -> addr:city
 postal_code  -> addr:postcode
 
 site:http://* -> addr:website oder so
+
+genus:fagus -> Fagus
+
+key 'en:Oak'
