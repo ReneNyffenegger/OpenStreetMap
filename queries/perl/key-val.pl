@@ -454,20 +454,20 @@ sub key_val { #_{
   my $val_ = shift;
 
   return unless 
-  # $key_ eq 'display' or
-  # $key_ eq 'thermometer' or
-  # $key_ eq 'lcn' or
-  # $key_ eq 'trailblazed' or
-  # $key_ eq 'shooting' or
-  #($key_ eq 'amenity' and $val_ eq 'hunting_stand') or
-  # $key_ eq 'club' or
-  #($key_ eq 'amenity' and $val_ eq 'community_centre') or
-  #($key_ eq 'amenity' and $val_ eq 'dojo') or
-  # $key_ eq 'substance' or
-  # $key_ eq 'organic' or
-  # $key_ eq 'drive_through' or
-  #($key_ eq 'amenity' and $val_ eq 'atm') or
-  #($key_ eq 'amenity' and $val_ eq 'post_box') or
+    $key_ eq 'display' or
+    $key_ eq 'thermometer' or
+    $key_ eq 'lcn' or
+    $key_ eq 'trailblazed' or
+    $key_ eq 'shooting' or
+   ($key_ eq 'amenity' and $val_ eq 'hunting_stand') or
+    $key_ eq 'club' or
+   ($key_ eq 'amenity' and $val_ eq 'community_centre') or
+   ($key_ eq 'amenity' and $val_ eq 'dojo') or
+    $key_ eq 'substance' or
+    $key_ eq 'organic' or
+    $key_ eq 'drive_through' or
+   ($key_ eq 'amenity' and $val_ eq 'atm') or
+   ($key_ eq 'amenity' and $val_ eq 'post_box') or
     $key_ eq 'atm' or
     1==0;
 
