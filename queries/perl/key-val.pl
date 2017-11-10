@@ -173,7 +173,7 @@ my $dbh = osm_queries::open_db();
   key_val('sport'         , 'tennis'  );
   key_val('sport'         , 'swimming'  );  # see also natural=beach
   key_val('sport'         , 'multi'  );
-  key_val('sport'         , 'shooting'  );
+  key_val('sport'         , 'shooting'  ); # see also shooting=*
   key_val('sport'         , 'basketball'  );
   key_val('sport'         , 'exercise'  );
   key_val('sport'         , 'athletics'  );
@@ -413,6 +413,31 @@ my $dbh = osm_queries::open_db();
   key_val('castle_type', '*');
   key_val('crop', '*');
 
+  key_val('display', '*');
+  key_val('thermometer', 'yes');
+  key_val('lcn', 'yes');
+  key_val('trailblazed', 'yes');
+  key_val('shooting', '*'); # see also sport=shooting / amenity=hunting_stand / club:sport
+# key_val('amenity', 'hunting_stand');
+  key_val('club', 'sport'); # S.a sport=…
+  key_val('club', 'Studentenverbindung');
+  key_val('amenity', 'community_centre');
+  key_val('amenity', 'dojo');
+  key_val('substance', 'gas');
+  key_val('substance', 'heat');
+  key_val('substance', 'water');
+
+# key_val('organic', 'yes');
+  key_val('organic', 'only');
+  key_val('organic', 'limited');
+
+  key_val('drive_through', 'yes');
+  key_val('amenity', 'atm'); # see also atm=yes
+  key_val('amenity', 'post_box');
+
+  key_val('atm', 'yes');
+
+
 
 #
 #      centralkey: eurokey
@@ -428,19 +453,25 @@ sub key_val { #_{
   my $key_ = shift;
   my $val_ = shift;
 
-  return unless $key_ eq  'ship'
-    or          $key_ eq  'island'
-    or          $key_ eq  'waste_basket'
-    or          $key_ eq  'healthcare:speciality'
-    or          $key_ eq  'healthcare'
-    or          $key_ eq  'plant'
-    or          $key_ eq  'landuse'
-    or         ($key_ eq  'amenity' and $val_ eq 'grave_yard')
-    or          $key_ eq  'resource'
-    or          $key_ eq  'wpt_symbol'
-    or          $key_ eq  'demolished:building'
-    or          $key_ eq  'castle_type'
-    or          $key_ eq  'crop';
+  return unless 
+  # $key_ eq 'display' or
+  # $key_ eq 'thermometer' or
+  # $key_ eq 'lcn' or
+  # $key_ eq 'trailblazed' or
+  # $key_ eq 'shooting' or
+  #($key_ eq 'amenity' and $val_ eq 'hunting_stand') or
+  # $key_ eq 'club' or
+  #($key_ eq 'amenity' and $val_ eq 'community_centre') or
+  #($key_ eq 'amenity' and $val_ eq 'dojo') or
+  # $key_ eq 'substance' or
+  # $key_ eq 'organic' or
+  # $key_ eq 'drive_through' or
+  #($key_ eq 'amenity' and $val_ eq 'atm') or
+  #($key_ eq 'amenity' and $val_ eq 'post_box') or
+    $key_ eq 'atm' or
+    1==0;
+
+  # Was ist mapillary
 
  (my $key_html_page = $key_) =~ s/:/_/g;
   my $val_html_page;
@@ -849,6 +880,7 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'atm'                     , 'no'       , 'kein ATM');
 
   print $html tr_td_if_key_val($val, 'amenity'            , 'cafe'         , 'Café');
+  print $html tr_td_if_key_val($val, 'amenity'            , 'post_box'     , 'Briefeinwurf');
   print $html tr_td_if_key_val($val, 'amenity'            , 'pub'          , 'Pub');
   print $html tr_td_if_key_val($val, 'cafe'               , 'yes'          , 'Café');
   print $html tr_td_if_key_val($val, 'amenity'            , 'restaurant'   , 'Restaurant');
@@ -932,6 +964,10 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'drinking_water'       , 'no', 'kein Trinkwasser');
   print $html tr_td_if_key_val($val, 'potable'              , 'yes', 'Trinkwasser');
   print $html tr_td_if_key_val($val, 'social_facility:for'  , 'senior', 'Altersheim');
+  print $html tr_td_if_key_val($val, 'location'  , 'underground', 'unterirdisch');
+  print $html tr_td_if_key_val($val, 'location'  , 'overground', 'überirdisch');
+  print $html tr_td_if_key_val($val, 'man_made'  , 'pipeline', 'Pipeline');
+  print $html tr_td_if_key_val($val, 'man_made'  , 'pumping_station', 'Pumpwerk');
 
   my $stars;
   if ($stars = delete $val->{stars} or $stars = delete $val->{'stars:hotel'}) {
