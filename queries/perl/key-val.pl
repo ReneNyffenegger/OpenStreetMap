@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 #
+#
 #    TODO:
 #
 #       
@@ -26,14 +27,147 @@ use strict;
 use utf8;
 use osm_queries;
 
+open (my $html_index, '>:encoding(utf-8)', '/tmp/index.html');
+
+my @key_vals = (
+ {key=>'amenity'        , val=>'bank'             , 'name' => 'Bank'},
+ {key=>'amenity'        , val=>'post_office'      , 'name' => 'Postfiliale'},
+ {key=>'amenity'        , val=>'restaurant'       , 'name' => 'Restaurant'},
+ {key=>'amenity'        , val=>'cafe'             , 'name' => 'Café'},         # See also cuisine:coffe_shop
+ {key=>'amenity'        , val=>'atm'              , 'name' => 'Geldautomat'},  # See also atm:yes
+
+ {key=>'amenity'        , val=>'watering_place'   , 'name' => 'Brunnen'},
+ {key=>'amenity'        , val=>'drinking_water'   , 'name' => 'Trinkwasser'},  # Trinkwasser: 3 Mal
+ {key=>'drinking_water' , val=>'yes'              , 'name' => 'Trinkwasser'},
+ {key=>'potable'        , val=>'yes'              , 'name' => 'Trinkwasser'},
+
+
+ {key=>'amenity'        , val=>'vending_machine'  , 'name' => 'Verkaufsautomat'},
+ {key=>'amenity'        , val=>'fast_food'        , 'name' => 'Fast-Food'},
+ {key=>'amenity'        , val=>'police'           , 'name' => 'Polizeistation'},
+ {key=>'amenity'        , val=>'pub'              , 'name' => 'Pub'},
+ {key=>'amenity'        , val=>'bar'              , 'name' => 'Bar'},
+ {key=>'amenity'        , val=>'bench'            , 'name' => 'Sitzbank'},
+ {key=>'amenity'        , val=>'hospital'         , 'name' => 'Spital'},
+ {key=>'amenity'        , val=>'fuel'             , 'name' => 'Tankstelle'},
+
+ {key=>'amenity'        , val=>'bbq'              , 'name' => 'Barbecue'      },    # See also barbecue_grill: yes
+ {key=>'barbecue_grill' , val=>'yes'              , 'name' => 'Barbecue-Grill'},    # See also Barbeque-Grill
+
+ {key=>'amenity'        , val=>'fountain'         , 'name' => 'Springbrunnen/Wasserspiel'      }, 
+
+ {key=>'cuisine'     , val=>'italian'          , 'name' => 'Italienische Küche'},
+ {key=>'cuisine'     , val=>'german'           , 'name' => 'Deutsche Küche'},
+ {key=>'cuisine'     , val=>'thai'             , 'name' => 'Thailändische Küche'},
+ {key=>'cuisine'     , val=>'asian'            , 'name' => 'Asiatische Küche'},
+ {key=>'cuisine'     , val=>'chinese'          , 'name' => 'Chinesische Küche'},
+ {key=>'cuisine'     , val=>'indian'           , 'name' => 'Indische Küche'},
+ {key=>'cuisine'     , val=>'french'           , 'name' => 'Französische Küche'},
+ {key=>'cuisine'     , val=>'japanese'         , 'name' => 'Japanische Küche'},
+ {key=>'cuisine'     , val=>'mexican'          , 'name' => 'Mexikanische Küche'},
+ {key=>'cuisine'     , val=>'turkish'          , 'name' => 'Türkische Küche'},
+ {key=>'cuisine'     , val=>'swiss'            , 'name' => 'Schweizer Küche'},
+
+ {key=>'cuisine'     , val=>'vegetarian'       , 'name' => 'Vegetarische Küche'},
+    {key=>'diet:vegetarian', val=>'yes'       , 'name' => 'vegetarisch'},
+
+ {key=>'cuisine'     , val=>'falafel'          , 'name' => 'Falafel'},
+ {key=>'cuisine'     , val=>'greek'            , 'name' => 'Griechische Küche'},
+ {key=>'cuisine'     , val=>'spanish'          , 'name' => 'Spanische Küche'},
+ {key=>'cuisine'     , val=>'vietnamese'       , 'name' => 'Spanische Küche'},
+ {key=>'cuisine'     , val=>'international'    , 'name' => 'Internationale Küche'},
+ {key=>'cuisine'     , val=>'sandwich'         , 'name' => 'Sandwiches'},
+ {key=>'cuisine'     , val=>'pizza'            , 'name' => 'Pizza'},
+ {key=>'cuisine'     , val=>'burger'           , 'name' => 'Hamburger'},
+ {key=>'cuisine'     , val=>'oriental'         , 'name' => 'Orientalische Küche'},
+ {key=>'cuisine'     , val=>'crepe'            , 'name' => 'Crêpes'},
+ {key=>'cuisine'     , val=>'ice_cream'        , 'name' => 'Glacé'},
+ {key=>'cuisine'     , val=>'steak_house'      , 'name' => 'Steak House'},
+ {key=>'cuisine'     , val=>'kebab'            , 'name' => 'Kebab'},
+ {key=>'cuisine'     , val=>'regional'         , 'name' => 'Regionale Küche'},
+ {key=>'cuisine'     , val=>'chicken'          , 'name' => 'Poulets'},
+ {key=>'cuisine'     , val=>'seasonal'         , 'name' => 'Saisonale Küche'},
+ {key=>'cuisine'     , val=>'coffee_shop'      , 'name' => 'Kaffeehaus'},           # see also amenity:cafe
+ {key=>'cuisine'     , val=>'korean'           , 'name' => 'Koreanische'},
+ {key=>'cuisine'     , val=>'fish'             , 'name' => 'Fischspezialitäten'},
+ {key=>'cuisine'     , val=>'mediterranean'    , 'name' => 'Mediterrane Küche'},
+ {key=>'food'        , val=>'yes'              , 'name' => 'Essen Küche'},
+
+ {key=>'craft'       , val=>'jeweller'         , 'name' => 'Juwelier'       },
+ {key=>'craft'       , val=>'cheese_making'    , 'name' => 'Käseherstellung'}, # See also shop:dairy
+
+ {key=>'shop'        , val=>'jewelry'          , 'name' => 'Juweliergeschäft'  },
+ {key=>'shop'        , val=>'dairy'            , 'name' => 'Milchladen'  }, # See also  craft:cheese_making / shop:cheese
+ {key=>'shop'        , val=>'cheese'           , 'name' => 'Käseladen'   }, # See also  craft:cheese_making / shop:dairy
+ {key=>'shop'        , val=>'pastry'           , 'name' => 'Konditorei'  },
+ {key=>'shop'        , val=>'art'              , 'name' => 'Kunstladen'  },
+ {key=>'shop'        , val=>'kiosk'            , 'name' => 'Kiosk'  },
+ {key=>'shop'        , val=>'bakery'           , 'name' => 'Bäckerei'  },
+ {key=>'shop'        , val=>'convenience'      , 'name' => 'Laden'  },
+
+ {key=>'second_hand' , val=>'yes'              , 'name' => 'Occasionen'  },
+
+ {key=>'payment:bitcoin'  , val=>'yes'           , 'name' => 'Bitcoin-Bezahlung'   },# see also: payment:litecoin=yes
+ {key=>'payment:litecoin' , val=>'yes'           , 'name' => 'Litecoin-Bezahlung'  },# see also: payment:bitcoin=yes
+#
+
+ {key=>'leisure'     , val=>'firepit'          , 'name' => 'Feuerstelle'  }, # See also fireplace:yes
+ {key=>'fireplace'   , val=>'yes'              , 'name' => 'Feuerstelle'  }, # See also leisure:firepit
+ {key=>'leisure'     , val=>'picnic_table'     , 'name' => 'Pick-Nick Tisch'  }, 
+ {key=>'leisure'     , val=>'playground'       , 'name' => 'Kinderspielplatz'  }, 
+
+ {key=>'natural'     , val=>'waterfall'        , 'name' => 'Wasserfall'   }, # See also waterway: waterfall
+ {key=>'waterway'    , val=>'waterfall'        , 'name' => 'Wasserfall'   }, # See also natural: waterfall
+ {key=>'natural'     , val=>'cave_entrance'    , 'name' => 'Höhlenzugang'   },
+
+ {key=>'natural'     , val=>'peak'             , 'name' => 'Berggipfel'   },
+ {key=>'summit:cross', val=>'yes'              , 'name' => 'Gipfelkreuz'   },
+
+ {key=>'natural'     , val=>'rock'             , 'name' => 'Fels'                         }, # See also natural:stone
+ {key=>'natural'     , val=>'stone'            , 'name' => 'Findling, Stein etc.'         }, # See also natural:rock
+ {key=>'natural'     , val=>'spring'           , 'name' => 'Quelle'         },
+
+ {key=>'tourism'     , val=>'hotel'            , 'name' => 'Hotel'  },
+ {key=>'tourism'     , val=>'guest_house'      , 'name' => 'Gasthaus'  },
+ {key=>'guest_house' , val=>'bed_and_breakfast', 'name' => 'Bed and Breakfast'  },
+ {key=>'tourism'     , val=>'attraction'       , 'name' => 'Touristische Attraktion'  },
+ {key=>'tourism'     , val=>'picnic_site'      , 'name' => 'Pick-Nick'  },
+ {key=>'tourism'     , val=>'viewpoint'        , 'name' => 'Aussichtspunkt'  },
+
+ {key=>'takeaway'    , val=>'yes'              , 'name' => 'Take-Away'  },
+
+ {key=>'landuse'     , val=>'cemetery'         , 'name' => 'Friedhof'  }, # See also amenity: grave_yard
+ {key=>'landuse'     , val=>'piste'            , 'name' => 'Piste'  },
+ {key=>'piste:type'  , val=>'hike'             , 'name' => 'Wandern'  },
+ {key=>'piste:type'  , val=>'skitour'          , 'name' => 'Skitour'  },
+
+ {key=>'historic'    , val=>'building'         , 'name' => 'Historisches Gebäude'  },
+ {key=>'historic'    , val=>'tomb'             , 'name' => 'Bekanntes Grab'        },    # See also tomb:tombstone
+
+ {key=>'historic'    , val=>'memorial'         , 'name' => 'Denkmal'               },  # 2 Mal Denkmal
+ {key=>'historic'    , val=>'monument'         , 'name' => 'Denkmal'               },
+
+ {key=>'historic'    , val=>'archaeological_site', 'name' => 'Archäologisch interessant'               },
+ {key=>'site_type'   , val=>'tumulus'            , 'name' => 'Hügelgrab'               },
+ {key=>'site_type'   , val=>'megalith'           , 'name' => 'Megalith'                },
+ {key=>'megalith_type', val=>'menhir'           , 'name' => 'Menhir'                },
+
+ {key=>'atm'         , val=>'yes'              , 'name' => 'Geldautomat'},               # See also amenity:atm
+
+ {key=>'tomb'        , val=>'tombstone'        , 'name' => 'Grabstein'},                 # See also historic:tomb
+ {key=>'emergency'   , val=>'phone'            , 'name' => 'Notfalltelephon'},
+
+);
+
 my $dbh = osm_queries::open_db();
+
+for my $key_val (@key_vals) {
+  key_val($key_val->{key}, $key_val->{val}, $key_val->{name});
+}
 
   key_val('shop', 'supermarket');
   key_val('shop', 'hairdresser');
-  key_val('shop', 'convenience');
   key_val('shop', 'clothes');
-  key_val('shop', 'bakery');
-  key_val('shop', 'kiosk');
   key_val('shop', 'car_repair');
   key_val('shop', 'car');
   key_val('shop', 'bicycle');
@@ -41,7 +175,7 @@ my $dbh = osm_queries::open_db();
   key_val('shop', 'butcher');
   key_val('shop', 'shoes');
   key_val('shop', 'sports');
-  key_val('shop', 'jewelry');
+# key_val('shop', 'jewelry');
   key_val('shop', 'farm');
   key_val('shop', 'optician');
   key_val('shop', 'furniture');
@@ -73,10 +207,7 @@ my $dbh = osm_queries::open_db();
   key_val('shop', 'dry_cleaning');
   key_val('shop', 'laundry');
   key_val('shop', 'pet');
-  key_val('shop', 'art');
   key_val('shop', 'fashion');
-  key_val('shop', 'dairy');           # see also craft=cheese_making
-  key_val('shop', 'cheese');
   key_val('shop', 'cosmetics');
   key_val('shop', 'no');              # Mostly gas stations
   key_val('shop', 'copyshop');
@@ -85,20 +216,26 @@ my $dbh = osm_queries::open_db();
   key_val('shop', 'photo');
   key_val('shop', 'hearing_aids');
   key_val('shop', 'deli');
+
  
-  key_val('amenity' , 'cafe' );
-  key_val('amenity' , 'fast_food' );
+# key_val('amenity' , 'cafe' );
+# key_val('amenity' , 'doctor' );
+# key_val('amenity' , 'fast_food' );
   key_val('amenity' , 'pharmacy' );     # See also shop=chemist
-  key_val('takeaway', 'yes' );
-  key_val('amenity', 'post_office' );
+# key_val('takeaway', 'yes' );
+# key_val('amenity', 'post_office' );
+# key_val('amenity', 'vending_machine' );
+
+  key_val('cuisine', 'italian');
  
   key_val('craft', 'brewery' );
+# key_val('craft', 'jeweller' );
   key_val('drink:wine', 'yes' ); # nur 8 Einträge
   key_val('drink:beer', 'yes' ); # nur 3 Einträge
   key_val('drinking_water', 'yes'            );   # See also amenity=drinking_water / natural=spring
-  key_val('amenity'       , 'drinking_water' );   # See also drinking_water=yes
+# key_val('amenity'       , 'drinking_water' );   # See also drinking_water=yes
   key_val('craft'         , 'winery' );           # see also shop=wine
-  key_val('craft'         , 'cheese_making' );    # see also shop=diary
+# key_val('craft'         , 'cheese_making' );    # see also shop=diary
   key_val('craft'         , 'carpenter' );
   key_val('craft'         , 'electrician' );
   key_val('craft'         , 'shoemaker' );
@@ -110,24 +247,18 @@ my $dbh = osm_queries::open_db();
   key_val('craft'         , 'photographer' );
   key_val('craft'         , 'beekeeper' );
   key_val('craft'         , 'plumber' );
-  key_val('amenity'       , 'bar'    );
+# key_val('amenity'       , 'bar'    );
 # key_val('vending'       , 'yes'    );
  
-  key_val('natural'       , 'peak'    );
 # key_val('natural'       , 'scree'    ); # Hangschutt - wohl nur interessant in Google Earth
 # key_val('natural'       , 'glacier'  );                wohl nur interessant in Google Earth
   key_val('natural'       , 'beach'  );     # see also sport=swimming
-  key_val('natural'       , 'stone'  );
-  key_val('natural'       , 'rock'  );
-  key_val('natural'       , 'cave_entrance'  );
 # key_val('natural'       , 'ridge'  );  # google earth
-  key_val('natural'       , 'spring'  );  # see also drinking_water=yes
 # key_val('natural'       , 'ridge'  );   #    google earth?
 # key_val('natural'       , 'heath'  );   #    google earth
 # key_val('natural'       , 'valley'  );  #    google earth
 # key_val('natural'       , 'crevasse'  ); #   google earth
 # key_val('natural'       , 'sinkhole'  ); #   google earth
-  key_val('natural'       , 'waterfall'  );
  
   key_val('amenity'       , 'toilets'  );
  
@@ -163,7 +294,7 @@ my $dbh = osm_queries::open_db();
   key_val('man_made'      , 'gasometer'  );
  
   key_val('fireplace'    , 'yes'  );
-  key_val('food'         , 'yes'  );
+# key_val('food'         , 'yes'  );
  
   key_val('free_flying'         , 'takeoff'  );
   key_val('free_flying:paragliding'         , 'yes'  );
@@ -204,14 +335,12 @@ my $dbh = osm_queries::open_db();
   key_val('sport'         , 'baseball'  );
   key_val('sport'         , 'archery'  );
  
-  key_val('tourism'      , 'picnic_site'  );
-  key_val('tourism' , 'hotel');
-  key_val('tourism' , 'viewpoint');
-  key_val('tourism' , 'attraction');
+# key_val('tourism' , 'hotel');
+# key_val('tourism' , 'attraction');
   key_val('tourism' , 'museum');
   key_val('tourism' , 'artwork');
   key_val('tourism' , 'alpine_hut');
-  key_val('tourism' , 'guest_house');
+# key_val('tourism' , 'guest_house');
   key_val('tourism' , 'camp_site');
   key_val('tourism' , 'chalet');
   key_val('tourism' , 'hostel');
@@ -221,6 +350,7 @@ my $dbh = osm_queries::open_db();
   key_val('tourism' , 'motel');
   key_val('tourism' , 'gallery');
   key_val('tourism' , 'theme_park');
+# key_val('tourism' , 'information');  # Too large
  
   key_val('attraction' , 'animal');
   key_val('attraction' , 'summer_tobbogan');
@@ -235,28 +365,22 @@ my $dbh = osm_queries::open_db();
   key_val('historic' , 'memorial'); # see also memorial=*
   key_val('historic' , 'wayside_shrine');
   key_val('historic' , 'boundary_stone');
-  key_val('historic' , 'archaeological_site');
-  key_val('historic' , 'monument');
   key_val('historic' , 'yes');
-  key_val('historic' , 'building');
+# key_val('historic' , 'building');
   key_val('historic' , 'citywalls');
   key_val('historic' , 'church');
   key_val('historic' , 'tower');
   key_val('historic' , 'city_gate');
-  key_val('historic' , 'tomb');
   key_val('historic' , 'monastery');
   key_val('historic' , 'battlefield');
  
   key_val('leisure'  , 'pitch');
   key_val('leisure'  , 'swimming_pool');
   key_val('leisure'  , 'garden');
-  key_val('leisure'  , 'playground');
   key_val('leisure'  , 'park');
   key_val('leisure'  , 'sports_centre');
   key_val('leisure'  , 'fitness_station');
   key_val('leisure'  , 'track');
-  key_val('leisure'  , 'firepit');
-  key_val('leisure'  , 'picnic_table');
   key_val('leisure'  , 'marina');
   key_val('leisure'  , 'nature_reserve');
   key_val('leisure'  , 'slipway');
@@ -285,7 +409,7 @@ my $dbh = osm_queries::open_db();
 
   key_val('microbrewery'  , 'yes');
  
-  key_val('amenity'  , 'bank');
+# key_val('amenity'  , 'bank');
   key_val('amenity'  , 'public_building');
  
   key_val('storage'  , 'oil');
@@ -300,8 +424,7 @@ my $dbh = osm_queries::open_db();
   key_val('heritage'         , '*');
   key_val('embankment'       , 'yes');
   key_val('mountain_pass'    , 'yes');
-  key_val('payment:bitcoin'  , 'yes'); # see also: currency:XBT=yes
-  key_val('ski'  , 'yes'); # see also: currency:XBT=yes
+  key_val('ski'  , 'yes'); 
   key_val('ski'  , 'cross-country');
   key_val('design'  , 'barrel');
   key_val('location'  , 'overground');
@@ -310,13 +433,12 @@ my $dbh = osm_queries::open_db();
   key_val('location'  , 'outdoor');
   key_val('location'  , 'lakeside');
   key_val('location'  , 'underwater');
-  key_val('amenity', 'restaurant' );
+# key_val('amenity', 'restaurant' );
   key_val('shelter_type', 'public_transport' );
   key_val('shelter_type', 'picnic_shelter' );
   key_val('shelter_type', 'wheather_shelter' );
   key_val('shelter_type', 'basic_hut' );
   key_val('shelter_type', 'rock_shelter' );
-  key_val('diet:vegetarian', 'yes' );
 
   key_val('funicular', 'yes' );
   key_val('motorboat', 'yes' );
@@ -346,7 +468,6 @@ my $dbh = osm_queries::open_db();
   key_val('emergency', 'fire_water_pond');
   key_val('emergency', 'yes');
   key_val('emergency', 'defibrillator');
-  key_val('emergency', 'phone');
   key_val('emergency', 'fire_hydrant');
 
   key_val('office', 'architect');
@@ -370,8 +491,7 @@ my $dbh = osm_queries::open_db();
   key_val('office', 'yes');
 
   key_val('amenity', 'fire_station'    ); # see also emergency=ambulance_station
-  key_val('amenity' , 'hospital'     );
-  key_val('amenity' , 'police'     );
+# key_val('amenity' , 'police'     );
   key_val('memorial', '*'     ); # see also historic=memorial
   key_val('hazard', 'shooting_range'     ); 
 
@@ -388,7 +508,6 @@ my $dbh = osm_queries::open_db();
   key_val('landuse', 'yes');
   key_val('landuse', 'greenfield');
   key_val('landuse', 'garages');
-  key_val('landuse', 'piste');
   key_val('landuse', 'brownfield');
   key_val('landuse', 'landfill');
   key_val('landuse', 'village_green');
@@ -403,7 +522,6 @@ my $dbh = osm_queries::open_db();
   key_val('landuse', 'commercial');
   key_val('landuse', 'construction');
   key_val('landuse', 'basin');
-  key_val('landuse', 'cemetery');  # s.a. amenity=grave_yard
 
   key_val('amenity', 'grave_yard'); # s.a . landuse = cemetery
   key_val('resource', '*');
@@ -435,7 +553,7 @@ my $dbh = osm_queries::open_db();
   key_val('amenity', 'atm'); # see also atm=yes
   key_val('amenity', 'post_box');
 
-  key_val('atm', 'yes');
+# key_val('atm', 'yes');
 
 
 
@@ -452,28 +570,17 @@ sub key_val { #_{
 
   my $key_ = shift;
   my $val_ = shift;
+  my $name_opt = shift;
 
-  return unless 
-    $key_ eq 'display' or
-    $key_ eq 'thermometer' or
-    $key_ eq 'lcn' or
-    $key_ eq 'trailblazed' or
-    $key_ eq 'shooting' or
-   ($key_ eq 'amenity' and $val_ eq 'hunting_stand') or
-    $key_ eq 'club' or
-   ($key_ eq 'amenity' and $val_ eq 'community_centre') or
-   ($key_ eq 'amenity' and $val_ eq 'dojo') or
-    $key_ eq 'substance' or
-    $key_ eq 'organic' or
-    $key_ eq 'drive_through' or
-   ($key_ eq 'amenity' and $val_ eq 'atm') or
-   ($key_ eq 'amenity' and $val_ eq 'post_box') or
-    $key_ eq 'atm' or
-    1==0;
+# return unless 
+#  ($key_ eq 'summit:cross'     and $val_ eq 'yes') or
+#  ($key_ eq 'guest_house' and $val_ eq 'bed_and_breakfast') or
+#   1==0;
 
   # Was ist mapillary
 
  (my $key_html_page = $key_) =~ s/:/_/g;
+
   my $val_html_page;
   if ($val_ eq '*') {
      $val_html_page = '_any_';
@@ -483,9 +590,19 @@ sub key_val { #_{
   }
 
   my $html_name_without_html = "$key_html_page-$val_html_page";
-  print "<a href='$html_name_without_html.html'>$key_ = $val_</a><br>\n";
 
-  my $html = osm_queries::start_html("key-val/$html_name_without_html", "Open Street Map key-val Paar $key_ = $val_", "Abfrage für <code>$key_ = $val_</code> im Schweizer Open Street Map Dataset.");
+  my $link_text = "$key_ = $val_";
+  my $html_title = "Open Street Map key-val Paar $key_ = $val_";
+
+  if ($name_opt) {
+    $html_title = "Open Street Map Daten für: $name_opt (Schweiz)";
+    $link_text = $name_opt;
+  }
+  print $html_index "<a href='$html_name_without_html.html'>$link_text</a><br>\n";
+
+
+
+  my $html = osm_queries::start_html("key-val/$html_name_without_html", $html_title, "Abfrage für <code>$key_ = $val_</code> im Schweizer Open Street Map Dataset.");
 
   my $where_val ='';
   if ($val_ ne '*') {
@@ -793,6 +910,24 @@ sub emit_record { #_{
 
   }
 
+  for my $key_val (@key_vals) {
+    
+
+  # my $val = shift;
+  # my $k   = shift;
+  # my $v   = shift;
+  # my $txt = shift;
+
+    if (exists $val->{$key_val->{key}}) {
+      if ($val->{$key_val->{key}} eq $key_val->{val}) {
+         delete $val->{$key_val->{key}};
+        (my $link = "$key_val->{key}-$key_val->{val}.html") =~ s/:/_/g;
+         print $html "<tr><td><a href='$link'>$key_val->{name}</a></tr></td>";
+#        return "<tr><td>$txt</td></tr>";
+      }
+    }
+  }
+
   print $html tr_td_if_key_val($val, 'fee'                     , 'yes'      , 'kostenpflichtig');
   print $html tr_td_if_key_val($val, 'fee'                     , 'no'       , 'kostenlos');
 
@@ -800,7 +935,8 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'access'                  , 'permissive', 'Zutritt geduldet');
   print $html tr_td_if_key_val($val, 'access'                  , 'private'   , 'nicht öffentlich');
 
-  print $html tr_td_if_key_val($val, 'takeaway'                , 'yes'      , 'Take-Away');
+  print $html tr_td_if_key_val($val, 'breakfast'               , 'yes'      , 'mit Frühstück');
+# print $html tr_td_if_key_val($val, 'takeaway'                , 'yes'      , 'Take-Away');
   print $html tr_td_if_key_val($val, 'takeaway'                , 'no'       , 'kein Take-Away');
   print $html tr_td_if_key_val($val, 'delivery'                , 'yes'      , 'Zustelldienst');
   print $html tr_td_if_key_val($val, 'delivery'                , 'no'       , 'kein Zustelldienst');
@@ -825,10 +961,6 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'communication:mobile_phone', 'yes' , 'Mobilfunkstation (BTS, Base Transceiver Station)');
   print $html tr_td_if_key_val($val, 'tower:type'              , 'bell_tower' , 'Glockenturm');
   print $html tr_td_if_key_val($val, 'tower:type'              , 'lighting' , 'Beleuchtung/Flutlicht');
-  print $html tr_td_if_key_val($val, 'tourism'                 , 'viewpoint' , 'Aussichtspunkt');
-  print $html tr_td_if_key_val($val, 'tourism'                 , 'picnic_site' , 'Pic-Nic');
-  print $html tr_td_if_key_val($val, 'leisure'                 , 'firepit' , 'Feuerstelle');
-  print $html tr_td_if_key_val($val, 'fireplace'               , 'yes' , 'Feuerstelle');
   print $html tr_td_if_key_val($val, 'fireplace'               , 'no' , 'keine Feuerstelle');
   print $html tr_td_if_key_val($val, 'leisure'                 , 'horse_riding' , 'Pferdereitsport');
   print $html tr_td_if_key_val($val, 'leisure'                 , 'fitness_station' , 'Fitnessstation');
@@ -837,7 +969,6 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'leisure'                 , 'pitch' , 'Spielfeld');
   print $html tr_td_if_key_val($val, 'leisure'                 , 'track' , '(Renn-)bahn');
   print $html tr_td_if_key_val($val, 'leisure'                 , 'stadium' , 'Stadium');
-  print $html tr_td_if_key_val($val, 'natural'                 , 'peak' , 'Berggipfel');
 
   print $html tr_td_if_key_val($val, 'beauty'                  , 'nails'    , 'Nägeldesign');
 
@@ -852,6 +983,8 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'sport'                   , 'equestrian', 'Pferdesport');
   print $html tr_td_if_key_val($val, 'sport'                   , 'mtb', 'Mountain-Bike');
   print $html tr_td_if_key_val($val, 'sport'                   , 'cycling', 'Velosport');
+
+  print $html tr_td_if_key_val($val, 'protected'               , 'yes'      , 'geschützt');
 
   print $html tr_td_if_key_val($val, 'diet:gluten_free'        , 'yes'      , 'glutenfrei');
   print $html tr_td_if_key_val($val, 'diet:vegetarian'         , 'no'       , 'nicht vegetarisch');
@@ -870,7 +1003,6 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'payment:credit_cards'    , 'no'       , 'keine Kreditkarten');
   print $html tr_td_if_key_val($val, 'payment:cash'            , 'yes'      , 'Bargeldbezahlung');
   print $html tr_td_if_key_val($val, 'payment:coins'           , 'yes'      , 'Münzbezahlung');
-  print $html tr_td_if_key_val($val, 'payment:bitcoin'         , 'yes'      , 'Bitcoinbezahlung');
   print $html tr_td_if_key_val($val, 'payment:notes'           , 'yes'      , 'Banknotenbezahlung');
   print $html tr_td_if_key_val($val, 'payment:maestro'         , 'yes'      , 'akzeptiert Maestro');
   print $html tr_td_if_key_val($val, 'payment:visa'            , 'yes'      , 'akzeptiert VISA');
@@ -881,15 +1013,13 @@ sub emit_record { #_{
 
   print $html tr_td_if_key_val($val, 'amenity'            , 'cafe'         , 'Café');
   print $html tr_td_if_key_val($val, 'amenity'            , 'post_box'     , 'Briefeinwurf');
-  print $html tr_td_if_key_val($val, 'amenity'            , 'pub'          , 'Pub');
+# print $html tr_td_if_key_val($val, 'amenity'            , 'pub'          , 'Pub');
   print $html tr_td_if_key_val($val, 'cafe'               , 'yes'          , 'Café');
-  print $html tr_td_if_key_val($val, 'amenity'            , 'restaurant'   , 'Restaurant');
-  print $html tr_td_if_key_val($val, 'amenity'            , 'fast_food'    , 'Fast-Food');
+# print $html tr_td_if_key_val($val, 'amenity'            , 'restaurant'   , 'Restaurant');
+# print $html tr_td_if_key_val($val, 'amenity'            , 'fast_food'    , 'Fast-Food');
   print $html tr_td_if_key_val($val, 'restaurant'         , 'yes'          , 'Restaurant');
-  print $html tr_td_if_key_val($val, 'shop'               , 'bakery'       , 'Bäckerei');
-  print $html tr_td_if_key_val($val, 'shop'               , 'pastry'       , 'Konditorei');
+# print $html tr_td_if_key_val($val, 'shop'               , 'pastry'       , 'Konditorei');
 
-  print $html tr_td_if_key_val($val, 'tomb'               , 'tombstone'    , 'Grabstein');
 
   print $html tr_td_if_key_val($val, 'internet_access'    , 'yes'          , 'Internetzugang');
   print $html tr_td_if_key_val($val, 'internet_access'    , 'no'           , 'kein Internetzugang');
@@ -906,9 +1036,7 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'shelter'            , 'yes', 'Unterstand/Schutz');
   print $html tr_td_if_key_val($val, 'covered'            , 'no', 'nicht überdeckt');
   print $html tr_td_if_key_val($val, 'covered'            , 'yes', 'überdeckt');
-  print $html tr_td_if_key_val($val, 'barbecue_grill'     , 'yes', 'Barbecue-Grill');
-  print $html tr_td_if_key_val($val, 'amenity'            , 'bench'  , 'Sitzbank');
-  print $html tr_td_if_key_val($val, 'amenity'            , 'bbq'  , 'Barbecue');
+
 
   print $html tr_td_if_key_val($val, 'service:bicycle:repair'    , 'yes'                   , 'Veloreperatur');
   print $html tr_td_if_key_val($val, 'amenity'                   , 'bicycle_repair_station', 'Veloreperatur');
@@ -932,11 +1060,10 @@ sub emit_record { #_{
   print $html tr_td_if_key_val($val, 'motorcycle:clothes'         , 'yes'         , 'Töffbekleidung'  );
   print $html tr_td_if_key_val($val, 'motorcycle:rental'          , 'yes'         , 'Töffvermietung'  );
 
-  print $html tr_td_if_key_val($val, 'second_hand'                , 'yes'         , 'Occasionen');
 
   print $html tr_td_if_key_val($val, 'amenity'                    , 'solarium'    , 'Solarium');
 
-  print $html tr_td_if_key_val($val, 'amenity'                    , 'drinking_water'    , 'Trinkwasserstelle');
+
   print $html tr_td_if_key_val($val, 'amenity'                    , 'toilets'    , 'Toilette');
   print $html tr_td_if_key_val($val, 'amenity'                    , 'water'      , 'Wasser');
 
@@ -944,30 +1071,32 @@ sub emit_record { #_{
 
   print $html tr_td_if_key_val($val, 'craft'              , 'key_cutter'   , 'Schlüsselservice');
 
-  print $html tr_td_if_key_val($val, 'amenity'              , 'fountain'   , 'Springbrunnen/Wasserspiel');
-  print $html tr_td_if_key_val($val, 'natural'              , 'spring'     , 'Quelle');
   print $html tr_td_if_key_val($val, 'amenity'              , 'parking'    , 'Parkplatz');
+
+  print $html tr_td_if_key_val($val, 'indoor'               , 'yes'    , 'in einem Gebäude');
+
+# print $html tr_td_if_key_val($val, 'amenity'  , 'bank', 'Bank');
+
   print $html tr_td_if_key_val($val, 'surface'              , 'pebblestone', 'Kiesplatz');
   print $html tr_td_if_key_val($val, 'surface'              , 'asphalt', 'Asphaltplatz');
   print $html tr_td_if_key_val($val, 'surface'              , 'tartan', 'Tartan- od. Kunststoffbelag');
 
-  print $html tr_td_if_key_val($val, 'tourism'              , 'hotel'  , 'Hotel');
+# print $html tr_td_if_key_val($val, 'tourism'              , 'hotel'  , 'Hotel');
   print $html tr_td_if_key_val($val, 'tourism'              , 'alpine_hut'  , 'Alphütte');
-  print $html tr_td_if_key_val($val, 'tourism'              , 'attraction'  , 'touristische Attraktion');
+# print $html tr_td_if_key_val($val, 'tourism'              , 'attraction'  , 'touristische Attraktion');
   print $html tr_td_if_key_val($val, 'tourism'              , 'museum'  , 'Museum');
-  print $html tr_td_if_key_val($val, 'historic'             , 'archaeological_site', 'historische Stätte');
-  print $html tr_td_if_key_val($val, 'historic'             , 'memorial', 'Denkmal');
   print $html tr_td_if_key_val($val, 'historic'             , 'ruins', 'historische Ruinen');
   print $html tr_td_if_key_val($val, 'ruins'                , 'yes', 'Ruinen');
-  print $html tr_td_if_key_val($val, 'drinking_water'       , 'yes', 'Trinkwasser');
+
+
   print $html tr_td_if_key_val($val, 'drinkable'            , 'no', 'kein Trinkwasser');
   print $html tr_td_if_key_val($val, 'drinking_water'       , 'no', 'kein Trinkwasser');
-  print $html tr_td_if_key_val($val, 'potable'              , 'yes', 'Trinkwasser');
   print $html tr_td_if_key_val($val, 'social_facility:for'  , 'senior', 'Altersheim');
   print $html tr_td_if_key_val($val, 'location'  , 'underground', 'unterirdisch');
   print $html tr_td_if_key_val($val, 'location'  , 'overground', 'überirdisch');
   print $html tr_td_if_key_val($val, 'man_made'  , 'pipeline', 'Pipeline');
   print $html tr_td_if_key_val($val, 'man_made'  , 'pumping_station', 'Pumpwerk');
+
 
   my $stars;
   if ($stars = delete $val->{stars} or $stars = delete $val->{'stars:hotel'}) {
@@ -987,40 +1116,6 @@ sub emit_record { #_{
     print $html "<tr><td>$beds Betten</td</tr>";
   }
 
-  if (my $cuisine = delete $val->{cuisine}) { #_{
-       if ($cuisine eq 'german'       ) { print $html "<tr><td>deutsche Küche</td</tr>" }
-    elsif ($cuisine eq 'italian'      ) { print $html "<tr><td>italienische Küche</td</tr>" }
-    elsif ($cuisine eq 'thai'         ) { print $html "<tr><td>thailändische Küche</td</tr>" }
-    elsif ($cuisine eq 'asian'        ) { print $html "<tr><td>asiatische Küche</td</tr>" }
-    elsif ($cuisine eq 'chinese'      ) { print $html "<tr><td>chinesische Küche</td</tr>" }
-    elsif ($cuisine eq 'indian'       ) { print $html "<tr><td>indische Küche</td</tr>" }
-    elsif ($cuisine eq 'french'       ) { print $html "<tr><td>französische Küche</td</tr>" }
-    elsif ($cuisine eq 'japanese'     ) { print $html "<tr><td>japanische Küche</td</tr>" }
-    elsif ($cuisine eq 'mexican'      ) { print $html "<tr><td>mexikanische Küche</td</tr>" }
-    elsif ($cuisine eq 'turkish'      ) { print $html "<tr><td>türkische Küche</td</tr>" }
-    elsif ($cuisine eq 'swiss'        ) { print $html "<tr><td>schweizer Küche</td</tr>" }
-    elsif ($cuisine eq 'vegetarian'   ) { print $html "<tr><td>vegetarische Küche</td</tr>" }
-    elsif ($cuisine eq 'falafel'      ) { print $html "<tr><td>Falafel</td</tr>" }
-    elsif ($cuisine eq 'greek'        ) { print $html "<tr><td>griechische Küche</td</tr>" }
-    elsif ($cuisine eq 'spanish'      ) { print $html "<tr><td>spanische Küche</td</tr>" }
-    elsif ($cuisine eq 'vietnamese'   ) { print $html "<tr><td>spanische Küche</td</tr>" }
-    elsif ($cuisine eq 'international') { print $html "<tr><td>internationale Küche</td</tr>" }
-    elsif ($cuisine eq 'sandwich'     ) { print $html "<tr><td>Sandwiches</td</tr>" }
-    elsif ($cuisine eq 'pizza'        ) { print $html "<tr><td>Pizza</td</tr>" }
-    elsif ($cuisine eq 'burger'       ) { print $html "<tr><td>Hamburger</td</tr>" }
-    elsif ($cuisine eq 'crepe'        ) { print $html "<tr><td>Crêpes</td</tr>" }
-    elsif ($cuisine eq 'ice_cream'    ) { print $html "<tr><td>Glacé</td</tr>" }
-    elsif ($cuisine eq 'steak_house'  ) { print $html "<tr><td>Steak House</td</tr>" }
-    elsif ($cuisine eq 'kebab'        ) { print $html "<tr><td>Kebab</td</tr>" }
-    elsif ($cuisine eq 'regional'     ) { print $html "<tr><td>regionale Küche</td</tr>" }
-    elsif ($cuisine eq 'chicken'      ) { print $html "<tr><td>Poulets</td</tr>" }
-    elsif ($cuisine eq 'seasonal'     ) { print $html "<tr><td>saisonale Küche</td</tr>" }
-    elsif ($cuisine eq 'coffee_shop'  ) { print $html "<tr><td>Kaffeehaus</td</tr>" }
-    elsif ($cuisine eq 'korean'       ) { print $html "<tr><td>koreanische</td</tr>" }
-    elsif ($cuisine eq 'fish'         ) { print $html "<tr><td>Fischspezialitäten</td</tr>" }
-    elsif ($cuisine eq 'mediterranean'         ) { print $html "<tr><td>mediterrane Küche</td</tr>" }
-    else                                { print $html "<tr><td>$cuisine cuisine</td</tr>" }
-  } #_}
 
   if (exists $val->{ele}) { #_{
     printf $html "<tr><td>%d M.ü.M</td></tr>", int(delete $val->{ele});
