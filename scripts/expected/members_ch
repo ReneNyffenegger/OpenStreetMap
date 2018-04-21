@@ -46,6 +46,7 @@
   123121283 way -                                                            outer     
   122998103 way -                                                            outer     
   122998768 way -                                                            outer     
+  554023668 way -                                                            outer     
    30979892 way -                                                            outer     
   122998150 way -                                                            outer     
   240280348 way Österreich — Schweiz / Suisse / Svizzera                     outer     
@@ -222,7 +223,6 @@
   123329210 way -                                                            outer     
   123329209 way -                                                            outer     
   123007622 way -                                                            outer     
-  123329207 way -                                                            outer     
   123329208 way -                                                            outer     
   123006583 way -                                                            outer     
   123007116 way -                                                            outer     
@@ -491,11 +491,13 @@
   125377277 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
   125377278 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
   125377275 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
+  549752035 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
   122975090 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
+  549752034 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
   124761787 way France - Schweiz/Suisse/Svizzera/Svizra                      outer     
-  312443796 way Deutschland - Schweiz / Suisse / Svizerra                    outer     
-  230804214 way Deutschland - Schweiz / Suisse / Svizerra                    outer     
+  549752044 way Deutschland - Schweiz / Suisse / Svizerra                    outer     
   230806783 way Deutschland - Schweiz / Suisse / Svizerra                    outer     
+  549752043 way Deutschland - Schweiz / Suisse / Svizerra                    outer     
   122975156 way -                                                            outer     
   124761790 way -                                                            outer     
   124761788 way -                                                            outer     
@@ -618,6 +620,7 @@
    40471659 way -                                                            inner     
   124997906 way -                                                            inner     
    40471792 way -                                                            inner     
+  556049535 way -                                                            inner     
   123007385 way -                                                            inner     
   123256726 way -                                                            inner     
   123256725 way -                                                            inner     

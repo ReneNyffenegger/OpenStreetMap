@@ -90,28 +90,27 @@ sub municipalities_area_tables { #_{
 sub tests { #_{
 
   my @rel_ids_de = $osm_db->rel_ids_ISO_3166_1('DE');
-  if (@rel_ids_de == 3) {
+  if (@rel_ids_de == 2) {
     print "rel_ids_de[0] = $rel_ids_de[0]\n" unless $rel_ids_de[0] == 51477;
     print "rel_ids_de[1] = $rel_ids_de[1]\n" unless $rel_ids_de[1] == 62781;
-    print "rel_ids_de[2] = $rel_ids_de[2]\n" unless $rel_ids_de[2] == 1111111;
-
+#   print "rel_ids_de[2] = $rel_ids_de[2]\n" unless $rel_ids_de[2] == 1111111;
   }
   else {
-    print "3 rel_ids de expected\n";
+    printf "3 rel_ids de expected, but gotten: %d\n", scalar @rel_ids_de;
   }
 
   my @rels_de = $osm_db->rels_ISO_3166_1('DE');
 
-  if (@rels_de == 3) { #_{
+  if (@rels_de == 2) { #_{
 
      my @rel_ids_de_sorted = sort {$a->{id} <=> $b->{id}} @rels_de;
      printf "first rel_id_de should be 51477 but is %d\n", $rel_ids_de_sorted[0]->{id}   unless $rel_ids_de_sorted[0]->{id} == 51477;
      printf "first rel_id_de should be 62781 but is %d\n", $rel_ids_de_sorted[1]->{id}   unless $rel_ids_de_sorted[1]->{id} == 62781;
-     printf "first rel_id_de should be 1111111 but is %d\n", $rel_ids_de_sorted[2]->{id}   unless $rel_ids_de_sorted[2]->{id} == 1111111;
+#    printf "first rel_id_de should be 1111111 but is %d\n", $rel_ids_de_sorted[2]->{id}   unless $rel_ids_de_sorted[2]->{id} == 1111111;
 
   } #_}
   else { #_{
-    print "3 rels_de expected\n";
+    printf "3 rels_de expected, but gotten %d\n", scalar @rels_de;
   } #_}
 
   my $rel_ch = $osm_db->rel_ch;
