@@ -141,7 +141,7 @@ sub end_html { #_{
 
   print $html qq{
   <hr>
-    <a href='http://renenyffenegger.ch/development/OpenStreetMap/queries/key-val'>Weitere key-val Open Street Map queries</a>
+    <a href='https://renenyffenegger.ch/development/OpenStreetMap/queries/key-val'>Weitere key-val Open Street Map queries</a>
   </body>
 </html>};
   close $html;
@@ -161,6 +161,10 @@ sub html_escape { #_{
 sub html_a { #_{
   my $url       = shift;
   my $text_html = shift;
+
+  if ($url !~ /^http/) {
+    $url = "http://$url";
+  }
 
   return "<a href='$url'>$text_html</a>";
   

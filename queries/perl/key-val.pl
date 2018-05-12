@@ -573,9 +573,11 @@ sub key_val { #_{
   my $name_opt = shift;
 
 # return unless 
-#  ($key_ eq 'summit:cross'     and $val_ eq 'yes') or
+#  ($key_ eq 'shop'     and $val_ eq 'beauty') or
 #  ($key_ eq 'guest_house' and $val_ eq 'bed_and_breakfast') or
 #   1==0;
+
+  print "$key_ $val_\n";
 
   # Was ist mapillary
 
@@ -911,19 +913,12 @@ sub emit_record { #_{
   }
 
   for my $key_val (@key_vals) {
-    
-
-  # my $val = shift;
-  # my $k   = shift;
-  # my $v   = shift;
-  # my $txt = shift;
 
     if (exists $val->{$key_val->{key}}) {
       if ($val->{$key_val->{key}} eq $key_val->{val}) {
          delete $val->{$key_val->{key}};
         (my $link = "$key_val->{key}-$key_val->{val}.html") =~ s/:/_/g;
          print $html "<tr><td><a href='$link'>$key_val->{name}</a></tr></td>";
-#        return "<tr><td>$txt</td></tr>";
       }
     }
   }
