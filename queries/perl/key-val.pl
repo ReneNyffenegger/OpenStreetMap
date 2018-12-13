@@ -69,7 +69,7 @@ my @key_vals = (
  {key=>'cuisine'     , val=>'swiss'            , 'name' => 'Schweizer Küche'},
 
  {key=>'cuisine'     , val=>'vegetarian'       , 'name' => 'Vegetarische Küche'},
-    {key=>'diet:vegetarian', val=>'yes'       , 'name' => 'vegetarisch'},
+ {key=>'diet:vegetarian', val=>'yes'       , 'name' => 'vegetarisch'},
 
  {key=>'cuisine'     , val=>'falafel'          , 'name' => 'Falafel'},
  {key=>'cuisine'     , val=>'greek'            , 'name' => 'Griechische Küche'},

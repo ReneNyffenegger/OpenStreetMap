@@ -110,7 +110,9 @@ sub start_html { #_{
   my $introText          = shift;
   my $html = start_file("$filename_no_suffix.html");
 
-  print $html qq{<html><head>
+  print $html qq{<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>$title</title>
 <style type='text/css'> 
@@ -120,6 +122,14 @@ sub start_html { #_{
 
   tr.nextRow { border-bottom: 1px solid #333 }
 
+  \@media all and (max-width: 599px) {
+
+    /* Force table to not be like tables anymore */
+    thead, tbody, th, td, tr {
+      display: block !important;
+    }
+
+  }
 
 </style>
 </head><body>
