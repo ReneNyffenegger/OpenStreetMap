@@ -26,7 +26,7 @@ where
   key = 'ISO3166-1';
 
 .print |  
-.print |     Examimine the notes of the three German ISO3166-1:
+.print |     Examine the notes of the three German ISO3166-1:
 .print |  
 
 .width 11 10 150
